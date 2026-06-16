@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <!--
 檔案位置：skhps-smoke/index.html
-時間戳記：2026-06-16 16:30 UTC+8
+時間戳記：2026-06-16 17:45 UTC+8
 用途：SKHPS Smoke 外部專案 entry / AJAX shell 測試頁；用 Theme40 fragment 驗證 skhpsv2 app-entry / loading / header / footer / runtime。
 
-本版調整：
-- 外部專案只接 skhpsv2/assets/js/app-entry.js。
-- app-entry.js 再接 skhpsv2/assets/js/entry-core.js。
-- loading 階段先載 skhpsv2/assets/css/skhps-loading.css。
-- Header/Footer 由 skhpsv2 水庫掛載，不使用 Theme40 demo 的 header/footer slot。
-- Theme40 原本 <style> 先完整保留，等下一輪再拆回 CSS Sheet 討論。
-- Body 改成 AJAX shell：上方按鈕載入 assets/ajax/*.html fragment。
-- index.html 不直接載 assets/js/ajax.js。
-- assets/js/app.js 只做最小業務入口與 app-ready 回報。
-- assets/js/ajax_bootstrap.js 負責啟動 assets/js/ajax.js。
-- assets/js/ajax.js 是唯一 AJAX controller。
-- assets/ajax/ 只放 AJAX 載入用 HTML fragment。
+本版定案：
+- 新外部專案 manifest 正式使用 app.json。
+- app-card.json 不再使用。
+- ajax_bootstrap.js 不再使用，Smoke 專案 bootstrap 併入 assets/js/app.js。
+- index.html 只宣告外部 app 身分、loading tasks、manifest URL、必要掛載點，並只載 skhpsv2/assets/js/app-entry.js。
+- index.html 不直接載入 assets/js/ajax.js / assets/js/app.js；這兩個由 app.json 的 entry.afterScripts 交給水庫載入。
+- assets/js/ajax.js 只保留為 fragment loader 工具，不自行 boot、不回報 gate。
+- assets/js/app.js 是 Smoke 專案唯一 bootstrap，負責初始化 fragment UI 並回報 smoke-app done。
 
-Loading Gate：
-- css-runtime
-- app-ready
-- skhps-shell 不寫在 HTML，由 entry-core.js 動態 require / done。
-
-重要規則：
-- 此頁是外部專案。
-- 本頁不直接載入 skhpsv2 共用 runtime scripts。
-- 本頁只設定外部 app 身分與 app-card/app.json 位置。
-- 版本由 version.js 管理。
+水庫底線：
+- 本頁是外部專案，不直接載入 skhpsv2 共用 runtime scripts。
 - 共用 header/footer/runtime/status/CSS Sheet runtime 由 skhpsv2 水庫載入。
+- Theme40 原本 <style> 先完整保留，等下一輪再拆回 CSS Sheet 討論。
 -->
 <html
   lang="zh-Hant"
   class="skhps-loading skhps-css-loading skhps-shell-loading skhps-main-loading"
   data-loading-title="SKHPS Smoke"
   data-skhps-entry-scope="external-app"
+  data-skhps-app-id="skhps-smoke"
+  data-skhps-app-name="SKHPS Smoke"
   data-skhps-page-id="skhps-smoke"
   data-skhps-page-map-current="SKHPS Smoke"
-  data-skhps-loading-tasks="css-runtime,app-ready"
+  data-skhps-loading-tasks="css-runtime,smoke-app"
   data-skhps-shell-ready="false"
   data-skhps-page-ready="false"
 >
@@ -2110,11 +2101,11 @@ hr{
       window.SKHPS_ENTRY_BASE_URL = runtimeBaseUrl(resolvedRuntime);
 
       /*
-        目前 app-entry / entry-core 實作仍以 SKHPS_APP_CARD_URL 為穩定入口。
-        SKHPS_APP_MANIFEST_URL 先同步宣告，等水庫正式切到 app.json 時可直接吃。
+        新標準 manifest 使用 app.json。
+        SKHPS_APP_CARD_URL 只作水庫舊 loader 相容橋接，但檔名仍指向 app.json。
       */
-      window.SKHPS_APP_CARD_URL = "app-card.json";
       window.SKHPS_APP_MANIFEST_URL = "app.json";
+      window.SKHPS_APP_CARD_URL = "app.json";
 
       document.documentElement.setAttribute("data-skhps-runtime", resolvedRuntime);
       document.documentElement.setAttribute("data-skhps-entry-scope", "external-app");
@@ -2188,7 +2179,7 @@ hr{
         </div>
 
         <article class="skhps-hero-card skhps-smoke-control-card">
-          <div class="skhps-toolbar skhps-smoke-toolbar" aria-label="Theme40 區塊分頁">
+          <div class="skhps-toolbar skhps-smoke-toolbar" data-smoke-tabs aria-label="Theme40 區塊分頁">
             <button class="skhps-btn skhps-btn-primary" type="button" data-smoke-fragment="assets/ajax/00-overview.html">
               總覽
             </button>

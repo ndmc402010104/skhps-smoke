@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "appId": "skhps-smoke",
+  "title": "SKHPS Smoke",
+  "name": "SKHPS Smoke",
+  "description": "用來驗證 skhpsv2 外部專案 entry、loading gate、CSS runtime、header/footer、runtime panel 與 Theme40 fragment loader 的 Smoke 測試專案。",
+  "group": "debug",
+  "href": "index.html",
+  "version": {
+    "source": "version.js",
+    "globalName": "SKHPS_VERSION",
+    "aliasGlobalName": "SKHPS_APP_VERSION"
+  },
+  "entry": {
+    "afterScripts": [
+      "assets/js/ajax.js",
+      "assets/js/app.js"
+    ],
+    "loadingTasks": [
+      "smoke-app"
+    ]
+  },
+  "features": {
+    "cssRuntime": true,
+    "header": true,
+    "footer": true,
+    "runtimePanel": true,
+    "backendClient": false,
+    "diagnostics": true
+  },
+  "backend": {
+    "required": false,
+    "actions": []
+  },
+  "capabilities": {
+    "hasBusinessUi": true,
+    "hasBackend": false,
+    "hasAjaxModules": false,
+    "hasFragments": true,
+    "canRunOfflineMock": true
+  },
+  "fragments": [
+    {
+      "id": "00-overview",
+      "title": "總覽",
+      "label": "總覽",
+      "src": "assets/ajax/00-overview.html",
+      "default": true
+    },
+    {
+      "id": "01-tokens",
+      "title": "Tokens",
+      "label": "Tokens",
+      "src": "assets/ajax/01-tokens.html"
+    },
+    {
+      "id": "02-typography-buttons-cards",
+      "title": "Typography / Buttons / Cards",
+      "label": "Typography / Buttons / Cards",
+      "src": "assets/ajax/02-typography-buttons-cards.html"
+    },
+    {
+      "id": "03-forms",
+      "title": "Forms",
+      "label": "Forms",
+      "src": "assets/ajax/03-forms.html"
+    },
+    {
+      "id": "04-tables-summary",
+      "title": "Tables Summary",
+      "label": "Tables Summary",
+      "src": "assets/ajax/04-tables-summary.html"
+    },
+    {
+      "id": "05-swipe-table",
+      "title": "Swipe Action Table",
+      "label": "Swipe Action Table",
+      "src": "assets/ajax/05-swipe-table.html"
+    },
+    {
+      "id": "06-expand-table",
+      "title": "Expand Detail Table",
+      "label": "Expand Detail Table",
+      "src": "assets/ajax/06-expand-table.html"
+    },
+    {
+      "id": "07-feedback",
+      "title": "Feedback",
+      "label": "Feedback",
+      "src": "assets/ajax/07-feedback.html"
+    },
+    {
+      "id": "08-loading-modal",
+      "title": "Loading / Modal",
+      "label": "Loading / Modal",
+      "src": "assets/ajax/08-loading-modal.html"
+    },
+    {
+      "id": "09-timer-media",
+      "title": "Timer / QR / Media",
+      "label": "Timer / QR / Media",
+      "src": "assets/ajax/09-timer-media.html"
+    },
+    {
+      "id": "10-kanban",
+      "title": "Drag & Drop",
+      "label": "Drag & Drop",
+      "src": "assets/ajax/10-kanban.html"
+    },
+    {
+      "id": "11-header",
+      "title": "Header",
+      "label": "Header",
+      "src": "assets/ajax/11-header.html"
+    },
+    {
+      "id": "12-footer",
+      "title": "Footer",
+      "label": "Footer",
+      "src": "assets/ajax/12-footer.html"
+    },
+    {
+      "id": "13-rules",
+      "title": "Rules",
+      "label": "Rules",
+      "src": "assets/ajax/13-rules.html"
+    }
+  ]
+}

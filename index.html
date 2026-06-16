@@ -1,0 +1,3708 @@
+<!DOCTYPE html>
+<!--
+檔案位置：skhps-smoke/index.html
+時間戳記：2026-06-16 15:10 UTC+8
+用途：SKHPS Smoke 外部專案 entry 測試頁；用 Theme40 handoff 畫面驗證 skhpsv2 app-entry / loading / header / footer / runtime。
+
+本版調整：
+- 外部專案只接 skhpsv2/assets/js/app-entry.js。
+- app-entry.js 再接 skhpsv2/assets/js/entry-core.js。
+- loading 階段先載 skhpsv2/assets/css/skhps-loading.css。
+- Header/Footer 由 skhpsv2 水庫掛載，不使用 Theme40 demo 的 header/footer slot。
+- Theme40 原本 <style> 先完整保留，等下一輪再拆回 CSS Sheet 討論。
+- Theme40 主畫面只放進 <main data-skhps-main>，不覆蓋水庫 header/footer/runtime。
+
+Loading Gate：
+- css-runtime
+- skhps-smoke
+- skhps-shell 不寫在 HTML，由 entry-core.js 動態 require / done。
+
+重要規則：
+- 此頁是外部專案。
+- 本頁不直接載入 skhpsv2 共用 runtime scripts。
+- 本頁只設定外部 app 身分與 app-card/app.json 位置。
+- 版本由 version.js 管理。
+- 共用 header/footer/runtime/status/CSS Sheet runtime 由 skhpsv2 水庫載入。
+-->
+<html
+  lang="zh-Hant"
+  class="skhps-loading skhps-css-loading skhps-shell-loading skhps-main-loading"
+  data-loading-title="SKHPS Smoke"
+  data-skhps-entry-scope="external-app"
+  data-skhps-page-id="skhps-smoke"
+  data-skhps-page-map-current="SKHPS Smoke"
+  data-skhps-loading-tasks="css-runtime,skhps-smoke"
+  data-skhps-shell-ready="false"
+  data-skhps-page-ready="false"
+>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>SKHPS Smoke</title>
+
+<style>
+/* =========================================================
+   THEME40 DESIGN SYSTEM FULL TEMPLATE
+   SKHPS / Indigo Paper Admin
+   Handoff version
+
+   已定案方向：
+   - Theme40：溫白紙感、灰藍主色、低彩度、乾淨留白、圓角卡片。
+   - 03 Buttons：Link 是文字連結；箭頭直接寫在文字內，不用 ::after。
+   - 04 Forms：Native select 用簡單 Theme40 版；保留 custom select dropdown。
+   - 04 Toggle：小膠囊，左停用紅色、右啟用綠色。
+   - 05 Tables：拆成 Swipe Action List 與 Expand Detail List，不再混同一個 row 行為。
+   - 05 Tables：不是 Excel 大橫表；桌機像管理清單，手機像卡片 list。
+========================================================= */
+
+/* =========================================================
+   01 / TOKENS
+========================================================= */
+:root{
+  --sk-bg:#eceff3;
+  --sk-bg-2:#dde6ec;
+  --sk-paper:#fbfbf8;
+  --sk-paper-2:#fffefa;
+  --sk-panel:#edf3f6;
+  --sk-panel-2:#e3ebf0;
+  --sk-line:#d0d9e3;
+  --sk-line-soft:rgba(208,217,227,.72);
+
+  --sk-text:#23323d;
+  --sk-muted:#62717c;
+  --sk-soft:#8a98a3;
+
+  --sk-primary:#516d87;
+  --sk-primary-dark:#40596f;
+  --sk-primary-soft:rgba(81,109,135,.14);
+
+  --sk-accent:#a78d72;
+  --sk-accent-dark:#8f765d;
+  --sk-accent-soft:rgba(167,141,114,.16);
+
+  --sk-ok:#5f8a79;
+  --sk-ok-soft:rgba(95,138,121,.15);
+  --sk-warn:#c09a5f;
+  --sk-warn-soft:rgba(192,154,95,.17);
+  --sk-danger:#b06f6a;
+  --sk-danger-soft:rgba(176,111,106,.15);
+  --sk-info:#5b7f99;
+  --sk-info-soft:rgba(91,127,153,.15);
+
+  --sk-radius-xs:8px;
+  --sk-radius-sm:12px;
+  --sk-radius-md:16px;
+  --sk-radius-lg:24px;
+  --sk-radius-xl:32px;
+  --sk-radius-pill:999px;
+
+  --sk-shadow-xs:0 1px 2px rgba(31,45,55,.05);
+  --sk-shadow-soft:0 10px 28px rgba(31,45,55,.09);
+  --sk-shadow-card:0 24px 58px rgba(31,45,55,.13);
+  --sk-shadow-float:0 34px 80px rgba(31,45,55,.18);
+
+  --sk-space-1:4px;
+  --sk-space-2:8px;
+  --sk-space-3:12px;
+  --sk-space-4:16px;
+  --sk-space-5:20px;
+  --sk-space-6:24px;
+  --sk-space-7:32px;
+  --sk-space-8:48px;
+
+  --sk-font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --sk-action-w:124px;
+}
+
+/* =========================================================
+   02 / RESET + BASE
+========================================================= */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--sk-font);
+  color:var(--sk-text);
+  background:linear-gradient(135deg,var(--sk-bg),var(--sk-bg-2));
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+svg{display:block}
+code{
+  background:var(--sk-panel);
+  color:var(--sk-primary-dark);
+  padding:2px 7px;
+  border-radius:8px;
+  font-size:.9em;
+}
+hr{
+  border:0;
+  border-top:1px solid var(--sk-line);
+  margin:22px 0;
+}
+
+/* =========================================================
+   03 / PAGE LAYOUT
+========================================================= */
+.sk-page{
+  max-width:1480px;
+  margin:0 auto;
+  padding:34px 28px 64px;
+}
+.sk-top-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-bottom:18px;
+}
+.sk-system-title{
+  font-size:15px;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.sk-system-sub{
+  color:var(--sk-muted);
+  font-size:13px;
+}
+.sk-hero{
+  background:rgba(251,251,248,.96);
+  border:1px solid var(--sk-line-soft);
+  border-radius:var(--sk-radius-xl);
+  box-shadow:var(--sk-shadow-card);
+  padding:34px;
+  margin-bottom:28px;
+}
+.sk-hero h1{
+  margin:8px 0 8px;
+  font-size:38px;
+  line-height:1.08;
+  letter-spacing:-.06em;
+}
+.sk-hero p{
+  margin:0;
+  max-width:880px;
+  color:var(--sk-muted);
+  line-height:1.8;
+}
+.sk-section{
+  margin-bottom:26px;
+}
+.sk-section-title{
+  display:flex;
+  align-items:baseline;
+  gap:18px;
+  margin:0 0 14px;
+}
+.sk-section-title h2{
+  margin:0;
+  font-size:22px;
+  letter-spacing:-.04em;
+}
+.sk-section-title .sk-num{
+  font-size:17px;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.sk-section-title .sk-desc{
+  color:var(--sk-muted);
+  font-size:14px;
+  font-weight:750;
+}
+.sk-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:16px;
+}
+.sk-col-2{grid-column:span 2}
+.sk-col-3{grid-column:span 3}
+.sk-col-4{grid-column:span 4}
+.sk-col-5{grid-column:span 5}
+.sk-col-6{grid-column:span 6}
+.sk-col-7{grid-column:span 7}
+.sk-col-8{grid-column:span 8}
+.sk-col-12{grid-column:span 12}
+
+/* =========================================================
+   04 / CARDS
+========================================================= */
+.sk-card{
+  background:rgba(251,251,248,.96);
+  border:1px solid var(--sk-line-soft);
+  border-radius:var(--sk-radius-lg);
+  box-shadow:var(--sk-shadow-soft);
+  padding:22px;
+}
+.sk-card.compact{padding:16px}
+.sk-card.flat{box-shadow:none}
+.sk-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:16px;
+}
+.sk-card-title-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.sk-card-icon{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  background:var(--sk-panel);
+  color:var(--sk-primary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--sk-line-soft);
+}
+.sk-card-icon.circle{
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--sk-primary),#7c95aa);
+  color:#fff;
+  box-shadow:0 14px 26px rgba(81,109,135,.20);
+}
+.sk-card-icon.circle.accent{
+  background:linear-gradient(135deg,var(--sk-accent),#c4ad90);
+}
+.sk-card-title{
+  margin:0;
+  font-size:18px;
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+.sk-card-sub{
+  margin-top:2px;
+  color:var(--sk-muted);
+  font-size:13px;
+  font-weight:800;
+}
+.sk-card-desc{
+  color:var(--sk-muted);
+  font-size:14px;
+  line-height:1.65;
+}
+.sk-stat{
+  font-size:34px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:-.06em;
+  margin:12px 0 8px;
+}
+
+/* =========================================================
+   05 / TYPOGRAPHY
+========================================================= */
+.sk-h1{font-size:36px;font-weight:950;letter-spacing:-.06em;margin:0}
+.sk-h2{font-size:28px;font-weight:950;letter-spacing:-.05em;margin:0}
+.sk-h3{font-size:20px;font-weight:950;letter-spacing:-.04em;margin:0}
+.sk-body{font-size:16px;line-height:1.8;color:var(--sk-text)}
+.sk-small{font-size:14px;color:var(--sk-muted);line-height:1.65}
+.sk-caption{font-size:12px;color:var(--sk-soft)}
+.sk-muted{color:var(--sk-muted)}
+.sk-text-center{text-align:center}
+
+/* =========================================================
+   06 / COLOR SWATCH
+========================================================= */
+.sk-token-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:14px;
+}
+.sk-token{
+  background:rgba(251,251,248,.96);
+  border:1px solid var(--sk-line-soft);
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  box-shadow:var(--sk-shadow-xs);
+}
+.sk-token-box{
+  height:78px;
+  border-radius:9px;
+  margin-bottom:10px;
+  border:1px solid rgba(35,50,61,.08);
+}
+.sk-token-name{
+  font-size:12px;
+  font-weight:950;
+}
+.sk-token-code{
+  margin-top:3px;
+  font-size:11px;
+  color:var(--sk-muted);
+  font-weight:800;
+}
+
+/* =========================================================
+   07 / BUTTONS
+========================================================= */
+.sk-btn-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+.sk-btn{
+  height:42px;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:10px 18px;
+  background:var(--sk-panel);
+  color:var(--sk-text);
+  font-size:14px;
+  font-weight:950;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  white-space:nowrap;
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    background-color .15s ease,
+    border-color .15s ease,
+    color .15s ease;
+}
+.sk-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(31,45,55,.10);
+}
+.sk-btn:active{
+  transform:translateY(0);
+  box-shadow:none;
+}
+.sk-btn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+.sk-btn svg{
+  width:16px;
+  height:16px;
+  flex:0 0 auto;
+}
+.sk-btn-primary{background:var(--sk-primary);color:white}
+.sk-btn-primary:hover{background:var(--sk-primary-dark)}
+.sk-btn-accent{background:var(--sk-accent);color:white}
+.sk-btn-ok{background:var(--sk-ok);color:white}
+.sk-btn-warn{background:var(--sk-warn);color:white}
+.sk-btn-danger{background:var(--sk-danger);color:white}
+.sk-btn-info{background:var(--sk-info);color:white}
+.sk-btn-outline{
+  background:transparent;
+  border-color:var(--sk-line);
+  color:var(--sk-primary);
+}
+.sk-btn-outline:hover{
+  background:rgba(81,109,135,.06);
+  border-color:rgba(81,109,135,.38);
+}
+.sk-btn-ghost{
+  background:transparent;
+  color:var(--sk-muted);
+}
+.sk-btn-ghost:hover{
+  background:rgba(81,109,135,.07);
+  color:var(--sk-text);
+  box-shadow:none;
+}
+.sk-btn-sm{
+  height:32px;
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:10px;
+  gap:6px;
+}
+.sk-btn-sm svg{width:14px;height:14px}
+.sk-btn-lg{
+  height:52px;
+  padding:13px 24px;
+  font-size:16px;
+  border-radius:14px;
+  gap:10px;
+}
+.sk-btn-lg svg{width:18px;height:18px}
+.sk-icon-btn{
+  width:42px;
+  height:42px;
+  padding:0;
+  border-radius:50%;
+}
+.sk-icon-btn.sk-btn-sm{width:32px;height:32px}
+.sk-icon-btn.sk-btn-lg{width:52px;height:52px}
+
+/* Edit pencil direction: left-leaning pencil, per Theme40 decision */
+.sk-edit-mark{
+  display:inline-block;
+  transform:scaleX(-1);
+  line-height:1;
+}
+
+.sk-link{
+  border:0;
+  background:transparent;
+  padding:0;
+  color:var(--sk-primary);
+  font-size:14px;
+  font-weight:900;
+  line-height:1.2;
+  display:inline-flex;
+  align-items:center;
+  cursor:pointer;
+  text-decoration:none;
+  transition:color .15s ease;
+}
+.sk-link:hover{
+  color:var(--sk-primary-dark);
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+.sk-link-muted{color:var(--sk-muted)}
+.sk-link-danger{color:var(--sk-danger)}
+
+/* =========================================================
+   08 / BADGES
+========================================================= */
+.sk-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:var(--sk-radius-pill);
+  padding:5px 10px;
+  background:var(--sk-panel);
+  color:var(--sk-primary);
+  font-size:12px;
+  font-weight:950;
+  white-space:nowrap;
+}
+.sk-badge-ok{background:var(--sk-ok-soft);color:var(--sk-ok)}
+.sk-badge-warn{background:var(--sk-warn-soft);color:#8a6334}
+.sk-badge-danger{background:var(--sk-danger-soft);color:var(--sk-danger)}
+.sk-badge-info{background:var(--sk-info-soft);color:var(--sk-info)}
+.sk-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:currentColor;
+}
+
+/* =========================================================
+   09 / FORMS
+========================================================= */
+.sk-field{
+  display:grid;
+  gap:7px;
+  margin-bottom:18px;
+}
+.sk-label{
+  font-size:13px;
+  color:var(--sk-text);
+  font-weight:950;
+}
+.sk-help{
+  color:var(--sk-soft);
+  font-size:12px;
+}
+.sk-form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.sk-input-wrap{
+  position:relative;
+}
+.sk-input-icon{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--sk-soft);
+  width:18px;
+  height:18px;
+  pointer-events:none;
+}
+.sk-input,.sk-select,.sk-textarea{
+  width:100%;
+  border:1px solid var(--sk-line);
+  border-radius:var(--sk-radius-md);
+  background:var(--sk-paper-2);
+  color:var(--sk-text);
+  padding:12px 14px;
+  outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+.sk-input.has-icon{padding-left:42px}
+.sk-textarea{min-height:116px;resize:vertical}
+.sk-input:focus,.sk-select:focus,.sk-textarea:focus{
+  border-color:var(--sk-primary);
+  box-shadow:0 0 0 4px var(--sk-primary-soft);
+}
+.sk-input[disabled]{
+  background:#edf1f4;
+  color:var(--sk-soft);
+}
+
+/* Native select：簡單 Theme40 版 */
+.sk-select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  padding-right:42px;
+  background:
+    linear-gradient(45deg,transparent 50%,var(--sk-primary) 50%),
+    linear-gradient(135deg,var(--sk-primary) 50%,transparent 50%),
+    var(--sk-paper-2);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%,
+    0 0;
+  background-size:
+    6px 6px,
+    6px 6px,
+    100% 100%;
+  background-repeat:no-repeat;
+}
+
+/* Custom select dropdown：保留給需要完整下拉視覺的頁面 */
+.sk-fake-select{
+  position:relative;
+}
+.sk-fake-select-button{
+  width:100%;
+  min-height:46px;
+  border:1px solid var(--sk-line);
+  border-radius:var(--sk-radius-md);
+  background:var(--sk-paper-2);
+  color:var(--sk-text);
+  padding:12px 42px 12px 14px;
+  text-align:left;
+  font-weight:850;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+  cursor:pointer;
+  position:relative;
+}
+.sk-fake-select-button::after{
+  content:"";
+  position:absolute;
+  right:16px;
+  top:17px;
+  width:9px;
+  height:9px;
+  border-right:2px solid var(--sk-primary);
+  border-bottom:2px solid var(--sk-primary);
+  transform:rotate(45deg);
+}
+.sk-fake-select-menu{
+  margin-top:8px;
+  border:1px solid var(--sk-line-soft);
+  background:var(--sk-paper);
+  border-radius:18px;
+  box-shadow:0 18px 42px rgba(31,45,55,.13);
+  padding:8px;
+  display:grid;
+  gap:6px;
+}
+.sk-fake-select-option{
+  border:0;
+  background:transparent;
+  border-radius:12px;
+  padding:10px 12px;
+  text-align:left;
+  color:var(--sk-muted);
+  font-weight:900;
+  cursor:pointer;
+}
+.sk-fake-select-option:hover,
+.sk-fake-select-option.is-active{
+  background:var(--sk-panel);
+  color:var(--sk-text);
+}
+
+/* =========================================================
+   10 / CUSTOM OPTIONS + MINI STATUS TOGGLE
+========================================================= */
+.sk-option-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+}
+.sk-option{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  min-height:42px;
+  padding:9px 14px;
+  border-radius:999px;
+  border:1px solid var(--sk-line);
+  background:rgba(255,254,250,.72);
+  color:var(--sk-muted);
+  font-size:14px;
+  font-weight:950;
+  cursor:pointer;
+  user-select:none;
+  transition:.16s ease;
+}
+.sk-option:hover{
+  background:var(--sk-panel);
+  border-color:rgba(81,109,135,.35);
+}
+.sk-option input{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+.sk-option-mark{
+  width:20px;
+  height:20px;
+  border-radius:7px;
+  border:2px solid #aebbc6;
+  background:#fffefa;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:13px;
+  line-height:1;
+  transition:.16s ease;
+}
+.sk-option.is-radio .sk-option-mark{border-radius:50%}
+.sk-option input:checked + .sk-option-mark{
+  border-color:var(--sk-primary);
+  background:var(--sk-primary);
+  box-shadow:0 0 0 4px var(--sk-primary-soft);
+}
+.sk-option input:checked + .sk-option-mark::after{
+  content:"✓";
+  font-weight:950;
+}
+.sk-option.is-radio input:checked + .sk-option-mark::after{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:white;
+}
+.sk-option:has(input:checked){
+  background:rgba(81,109,135,.10);
+  border-color:rgba(81,109,135,.45);
+  color:var(--sk-text);
+}
+
+/* 小膠囊狀態開關：左停用紅色，右啟用綠色 */
+.sk-mini-status-row{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  width:fit-content;
+}
+.sk-mini-status-control{
+  --track-w:96px;
+  --track-h:34px;
+  --pad:3px;
+  --thumb-w:46px;
+
+  position:relative;
+  display:inline-flex;
+  width:var(--track-w);
+  height:var(--track-h);
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  flex:0 0 auto;
+}
+.sk-mini-status-control input{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+.sk-mini-status-track{
+  width:var(--track-w);
+  height:var(--track-h);
+  border-radius:999px;
+  border:1px solid var(--sk-line);
+  background:
+    linear-gradient(90deg,
+      rgba(176,111,106,.18) 0 50%,
+      rgba(95,138,121,.18) 50% 100%);
+  position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+.sk-mini-status-thumb{
+  position:absolute;
+  top:var(--pad);
+  left:var(--pad);
+  width:var(--thumb-w);
+  height:calc(var(--track-h) - var(--pad) * 2);
+  border-radius:999px;
+  background:var(--sk-danger);
+  box-shadow:0 5px 12px rgba(176,111,106,.23);
+  transition:.2s ease;
+}
+.sk-mini-status-label{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:950;
+  z-index:1;
+  transition:.18s ease;
+}
+.sk-mini-status-label.is-off{
+  left:0;
+  color:white;
+}
+.sk-mini-status-label.is-on{
+  right:0;
+  color:var(--sk-ok);
+}
+.sk-mini-status-control input:checked + .sk-mini-status-track .sk-mini-status-thumb{
+  transform:translateX(44px);
+  background:var(--sk-ok);
+  box-shadow:0 5px 12px rgba(95,138,121,.23);
+}
+.sk-mini-status-control input:checked + .sk-mini-status-track .sk-mini-status-label.is-off{
+  color:var(--sk-danger);
+}
+.sk-mini-status-control input:checked + .sk-mini-status-track .sk-mini-status-label.is-on{
+  color:white;
+}
+.sk-mini-status-text{
+  color:var(--sk-muted);
+  font-size:14px;
+  font-weight:950;
+  min-width:52px;
+}
+
+/* =========================================================
+   11 / NAVIGATION
+========================================================= */
+.sk-topbar{
+  min-height:64px;
+  background:rgba(251,251,248,.96);
+  border:1px solid var(--sk-line-soft);
+  border-radius:var(--sk-radius-lg);
+  box-shadow:var(--sk-shadow-soft);
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+}
+.sk-topbar-title{
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+.sk-topbar-meta{
+  margin-top:3px;
+  color:var(--sk-muted);
+  font-size:13px;
+}
+.sk-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.sk-tab{
+  border-radius:var(--sk-radius-pill);
+  padding:8px 14px;
+  background:var(--sk-panel);
+  color:var(--sk-muted);
+  font-size:13px;
+  font-weight:950;
+}
+.sk-tab.is-active{
+  background:var(--sk-primary);
+  color:white;
+}
+.sk-breadcrumb{
+  color:var(--sk-muted);
+  font-size:13px;
+}
+.sk-footer{
+  min-height:44px;
+  border-radius:var(--sk-radius-lg);
+  border:1px solid var(--sk-line-soft);
+  background:rgba(251,251,248,.9);
+  padding:10px 14px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  color:var(--sk-muted);
+  font-size:12px;
+}
+
+/* =========================================================
+   12 / ALERTS + NOTICE
+========================================================= */
+.sk-alert{
+  border-radius:18px;
+  padding:14px 16px;
+  border:1px solid;
+  font-weight:850;
+  line-height:1.6;
+}
+.sk-alert-ok{background:var(--sk-ok-soft);border-color:rgba(95,138,121,.28);color:var(--sk-ok)}
+.sk-alert-warn{background:var(--sk-warn-soft);border-color:rgba(192,154,95,.3);color:#8a6334}
+.sk-alert-danger{background:var(--sk-danger-soft);border-color:rgba(176,111,106,.28);color:var(--sk-danger)}
+.sk-alert-info{background:var(--sk-info-soft);border-color:rgba(91,127,153,.28);color:var(--sk-info)}
+.sk-info-strip{
+  border:1px solid rgba(91,127,153,.25);
+  background:rgba(91,127,153,.08);
+  color:var(--sk-info);
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:14px;
+  font-weight:850;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* =========================================================
+   05 / Traditional Theme40 Table
+========================================================= */
+.sk-table-shell{display:grid;gap:14px}
+.sk-table-shell,.sk-table-wrap,.sk-table,.sk-data-row,.sk-detail-row{overflow-anchor:none}
+.sk-table-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.sk-table-mode-text{
+  color:var(--sk-muted);
+  font-size:13px;
+  font-weight:850;
+}
+.sk-table-wrap{
+  overflow-x:auto;
+  overflow-y:visible;
+  padding:0 2px;
+}
+.sk-table{
+  width:100%;
+  min-width:880px;
+  border-collapse:separate;
+  border-spacing:0 8px;
+  table-layout:fixed;
+}
+.sk-table col.col-project{width:36%}
+.sk-table col.col-env{width:12%}
+.sk-table col.col-position{width:12%}
+.sk-table col.col-status{width:14%}
+.sk-table col.col-version{width:12%}
+.sk-table col.col-updated{width:14%}
+.sk-table thead th{
+  padding:0 16px 8px;
+  text-align:left;
+  color:var(--sk-muted);
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.sk-table tbody tr.sk-data-row{
+  position:relative;
+  touch-action:pan-y;
+}
+.sk-table tbody tr.sk-data-row td{
+  position:relative;
+  height:66px;
+  padding:12px 16px;
+  background:rgba(251,251,248,.96);
+  border-top:1px solid var(--sk-line-soft);
+  border-bottom:1px solid var(--sk-line-soft);
+  vertical-align:middle;
+  transition:background-color .14s ease, box-shadow .14s ease;
+}
+.sk-table tbody tr.sk-data-row td:first-child{
+  border-left:1px solid var(--sk-line-soft);
+  border-radius:18px 0 0 18px;
+  overflow:hidden;
+}
+.sk-table tbody tr.sk-data-row td:last-child{
+  border-right:1px solid var(--sk-line-soft);
+  border-radius:0 18px 18px 0;
+}
+.sk-table tbody tr.sk-data-row:hover td{background:#f8f8f2}
+.sk-table tbody tr.sk-data-row.is-action-open td,
+.sk-table tbody tr.sk-data-row.is-expanded td{
+  background:rgba(251,251,248,.98);
+}
+.sk-table tbody tr.sk-data-row.is-expanded td{
+  background:rgba(81,109,135,.075);
+}
+.sk-table tbody tr.sk-data-row.is-drag-source td{
+  opacity:.32;
+}
+/* V3.1：切換展開列時暫停 table 內部 transition，避免先滑動再補償的可見跳動 */
+.sk-table.is-silent-switch .sk-project-main,
+.sk-table.is-silent-switch .sk-row-action-rail,
+.sk-table.is-silent-switch .sk-expand-mark,
+.sk-table.is-silent-switch tbody tr.sk-data-row td{
+  transition:none !important;
+}
+.sk-cell-content{
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sk-project-cell{z-index:1}
+.sk-project-main{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  transition:transform .16s ease;
+}
+.sk-data-row.is-action-open .sk-project-main,
+.sk-data-row.is-expanded .sk-project-main{
+  transform:translateX(var(--sk-action-w));
+}
+.sk-project-text{
+  display:grid;
+  gap:3px;
+  min-width:0;
+}
+.sk-project-text strong{
+  font-size:15px;
+  font-weight:950;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sk-project-text span{
+  color:var(--sk-muted);
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sk-row-action-rail{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:var(--sk-action-w);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  z-index:3;
+  transform:translateX(calc(var(--sk-action-w) * -1));
+  transition:transform .16s ease;
+}
+.sk-data-row.is-action-open .sk-row-action-rail,
+.sk-data-row.is-expanded .sk-row-action-rail{
+  transform:translateX(0);
+}
+.sk-row-action{
+  border:0;
+  color:white;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:4px;
+  font-size:12px;
+  font-weight:950;
+}
+.sk-row-action.edit{background:#5e7fa2}
+.sk-row-action.delete{background:var(--sk-danger)}
+.sk-row-action:hover{filter:brightness(.96)}
+.sk-reorder-handle{
+  width:30px;
+  height:30px;
+  border:1px solid var(--sk-line);
+  border-radius:9px;
+  background:var(--sk-paper-2);
+  color:var(--sk-primary);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  font-weight:950;
+  line-height:1;
+  flex:0 0 auto;
+}
+.sk-reorder-handle:active{cursor:grabbing}
+.sk-expand-mark{
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  background:var(--sk-panel);
+  color:var(--sk-primary);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:950;
+  transition:.14s ease;
+  flex:0 0 auto;
+}
+.sk-data-row.is-expanded .sk-expand-mark{
+  transform:rotate(90deg);
+  background:var(--sk-primary);
+  color:white;
+}
+.sk-mobile-meta{display:none}
+.sk-table.is-reorder-mode .sk-row-action-rail{display:none}
+.sk-table.is-reorder-mode .sk-data-row.is-action-open .sk-project-main,
+.sk-table.is-reorder-mode .sk-data-row.is-expanded .sk-project-main{
+  transform:none;
+}
+.sk-table.is-reorder-mode .sk-reorder-handle{display:inline-flex}
+.sk-table.is-reorder-mode tbody tr.sk-data-row td{background:rgba(251,251,248,.98)}
+.sk-table.is-reorder-mode tbody tr.sk-data-row:hover td{background:#f8f8f2}
+
+.sk-detail-row[hidden]{display:none}
+.sk-detail-row td.sk-detail-cell{
+  padding:0 0 8px;
+  border:0;
+  background:transparent;
+}
+.sk-detail-card{
+  margin:0 0 0 0;
+  background:rgba(237,243,246,.74);
+  border:1px solid rgba(208,217,227,.72);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:var(--sk-shadow-xs);
+}
+.sk-detail-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr .85fr;
+  gap:14px;
+}
+.sk-detail-box{
+  background:rgba(251,251,248,.94);
+  border:1px solid var(--sk-line-soft);
+  border-radius:16px;
+  padding:14px;
+}
+.sk-detail-box strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:14px;
+}
+.sk-detail-box span{
+  display:block;
+  color:var(--sk-muted);
+  font-size:13px;
+  line-height:1.65;
+}
+.sk-drop-indicator td{
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  height:12px !important;
+}
+.sk-drop-line{
+  position:relative;
+  height:12px;
+  display:flex;
+  align-items:center;
+}
+.sk-drop-line::before{
+  content:"";
+  display:block;
+  width:100%;
+  height:3px;
+  border-radius:999px;
+  background:var(--sk-primary);
+  box-shadow:0 0 0 5px rgba(81,109,135,.10);
+}
+.sk-drop-line span{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  border:1px solid rgba(81,109,135,.24);
+  border-radius:999px;
+  padding:2px 10px;
+  background:var(--sk-paper-2);
+  color:var(--sk-primary);
+  font-size:12px;
+  font-weight:950;
+}
+.table-collapse-spacer{
+  width:100%;
+  pointer-events:none;
+  overflow:hidden;
+  transition:none;
+}
+
+@media(max-width:900px){
+  .sk-col-6{grid-column:span 12}
+  .sk-detail-grid{grid-template-columns:1fr}
+}
+@media(max-width:767px){
+  .sk-page{padding:22px 14px 52px}
+  .sk-top-meta{align-items:flex-start;flex-direction:column}
+  .sk-hero{padding:24px;border-radius:24px}
+  .sk-hero h1{font-size:29px}
+  .sk-section-title{display:block}
+  .sk-section-title h2{margin-top:6px}
+  .sk-table-wrap{overflow:visible;padding:0}
+  .sk-table{
+    display:block;
+    min-width:0;
+    border-spacing:0;
+  }
+  .sk-table colgroup,
+  .sk-table thead{display:none}
+  .sk-table tbody{display:block}
+  .sk-table tbody tr.sk-data-row{
+    display:block;
+    margin:0 0 10px;
+    border:1px solid var(--sk-line-soft);
+    border-radius:18px;
+    background:rgba(251,251,248,.96);
+    box-shadow:var(--sk-shadow-xs);
+    overflow:hidden;
+  }
+  .sk-table tbody tr.sk-data-row td,
+  .sk-table tbody tr.sk-data-row td:first-child,
+  .sk-table tbody tr.sk-data-row td:last-child{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    height:auto;
+    min-height:0;
+    padding:7px 14px;
+    border:0;
+    border-radius:0;
+    background:transparent;
+  }
+  .sk-table tbody tr.sk-data-row td:first-child{padding-top:14px;display:block;position:relative}
+  .sk-table tbody tr.sk-data-row td:last-child{padding-bottom:14px}
+  .sk-table tbody tr.sk-data-row:hover td{background:transparent}
+  .sk-table tbody tr.sk-data-row.is-expanded{background:rgba(81,109,135,.065)}
+  .sk-table tbody tr.sk-data-row.is-expanded td{background:transparent}
+  .sk-row-action-rail{height:58px;bottom:auto}
+  .sk-data-row.is-action-open .sk-project-main,
+  .sk-data-row.is-expanded .sk-project-main{transform:translateX(112px)}
+  .sk-project-main{gap:9px}
+  .sk-project-text strong{font-size:16px}
+  .sk-project-text span{font-size:13px}
+  .sk-mobile-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:7px;
+  }
+  .sk-table tbody tr.sk-data-row td:not(.sk-project-cell)::before{
+    content:attr(data-label);
+    color:var(--sk-soft);
+    font-size:12px;
+    font-weight:950;
+  }
+  .sk-table tbody tr.sk-data-row td.mobile-compact-hide{display:none}
+  .sk-detail-row{display:block}
+  .sk-detail-row[hidden]{display:none}
+  .sk-detail-row td.sk-detail-cell{
+    display:block;
+    padding:0 0 10px;
+  }
+  .sk-detail-card{border-radius:18px;padding:14px}
+  .sk-drop-indicator,
+  .sk-drop-indicator td{display:block !important}
+}
+
+/* =========================================================
+   14 / TIMER
+========================================================= */
+.sk-timer{
+  text-align:center;
+  background:linear-gradient(180deg,rgba(251,251,248,.98),rgba(237,243,246,.92));
+}
+.sk-timer-display{
+  margin:18px 0 8px;
+  font-size:64px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:-.075em;
+  font-variant-numeric:tabular-nums;
+}
+.sk-timer-status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-weight:950;
+  color:var(--sk-ok);
+  margin-bottom:20px;
+}
+.sk-timer.is-paused .sk-timer-status{color:var(--sk-warn)}
+.sk-timer.is-finished .sk-timer-status{color:var(--sk-info)}
+.sk-timer.is-error .sk-timer-status{color:var(--sk-danger)}
+.sk-timer-meta{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+.sk-timer-meta div{
+  background:rgba(237,243,246,.86);
+  border:1px solid rgba(208,217,227,.68);
+  border-radius:16px;
+  padding:10px;
+}
+.sk-timer-meta strong{display:block;font-size:13px}
+.sk-timer-meta span{display:block;margin-top:2px;color:var(--sk-muted);font-size:12px}
+
+/* =========================================================
+   15 / MODAL
+========================================================= */
+.sk-modal-demo{
+  min-height:160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.sk-modal{
+  width:min(460px,100%);
+  background:var(--sk-paper);
+  border:1px solid var(--sk-line-soft);
+  border-radius:18px;
+  box-shadow:var(--sk-shadow-soft);
+  padding:22px;
+}
+.sk-modal-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+
+/* =========================================================
+   16 / LOADING + EMPTY
+========================================================= */
+.sk-spinner{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:4px solid rgba(81,109,135,.16);
+  border-top-color:var(--sk-primary);
+  animation:sk-spin 1s linear infinite;
+}
+@keyframes sk-spin{to{transform:rotate(360deg)}}
+.sk-skeleton{
+  height:16px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#e2e8ee,#fbfbf8,#e2e8ee);
+  background-size:200% 100%;
+  animation:sk-shine 1.6s infinite;
+}
+@keyframes sk-shine{to{background-position:-200% 0}}
+.sk-empty{
+  border:1px dashed #bfcbd6;
+  background:rgba(237,243,246,.66);
+  border-radius:18px;
+  padding:30px 20px;
+  text-align:center;
+}
+
+/* =========================================================
+   17 / QR + MEDIA
+========================================================= */
+.sk-qr{
+  width:min(170px,100%);
+  aspect-ratio:1/1;
+  margin:auto;
+  border-radius:10px;
+  background:
+    linear-gradient(90deg,#23323d 8px,transparent 8px),
+    linear-gradient(#23323d 8px,transparent 8px),
+    #fffefa;
+  background-size:28px 28px;
+  border:8px solid #fffefa;
+  box-shadow:var(--sk-shadow-soft);
+}
+.sk-upload{
+  border:2px dashed #bfcbd6;
+  border-radius:18px;
+  background:rgba(237,243,246,.7);
+  padding:28px;
+  text-align:center;
+  color:var(--sk-muted);
+}
+.sk-media-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.sk-media-item{
+  min-height:96px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#edf3f6,#dce7ee);
+  border:1px solid var(--sk-line-soft);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:8px;
+  font-weight:950;
+  color:var(--sk-primary);
+}
+
+/* =========================================================
+   18 / KANBAN + MOBILE DRAG
+========================================================= */
+.sk-kanban{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.sk-lane{
+  position:relative;
+  background:rgba(237,243,246,.72);
+  border:1px solid var(--sk-line-soft);
+  border-radius:14px;
+  padding:14px;
+  min-height:190px;
+}
+.sk-lane-title{
+  font-weight:950;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.sk-drag-card{
+  background:var(--sk-paper);
+  border:1px solid var(--sk-line-soft);
+  border-radius:10px;
+  padding:13px;
+  box-shadow:var(--sk-shadow-xs);
+  margin-bottom:10px;
+  touch-action:none;
+  user-select:none;
+}
+.sk-drag-card.is-dragging{
+  opacity:.82;
+  transform:scale(1.03);
+  box-shadow:var(--sk-shadow-float);
+}
+.sk-lane.is-over{
+  outline:3px solid rgba(81,109,135,.22);
+  background:rgba(237,243,246,.95);
+}
+.sk-lane-drop-hint{
+  height:34px;
+  margin:4px 0 10px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--sk-primary);
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.04em;
+  pointer-events:none;
+}
+.sk-lane-drop-hint::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  border-top:2px solid rgba(81,109,135,.45);
+}
+.sk-lane-drop-hint span{
+  position:relative;
+  z-index:1;
+  padding:4px 12px;
+  border:1px solid rgba(81,109,135,.28);
+  border-radius:999px;
+  background:var(--sk-panel);
+  box-shadow:var(--sk-shadow-xs);
+}
+
+
+
+/* =========================================================
+   19 / HEADER + RUNTIME FOOTER
+   Header 是乾淨導航殼；Footer 才是 runtime status bar。
+========================================================= */
+.sk-header-demo-stack{
+  display:grid;
+  gap:14px;
+}
+.sk-shell-header{
+  border:1px solid var(--sk-line-soft);
+  border-radius:var(--sk-radius-lg);
+  background:rgba(251,251,248,.96);
+  box-shadow:var(--sk-shadow-soft);
+  padding:14px 16px;
+  display:grid;
+  gap:12px;
+}
+.sk-shell-header.is-compact{
+  padding:12px 14px;
+  border-radius:18px;
+}
+.sk-shell-header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-width:0;
+}
+.sk-shell-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  color:inherit;
+  text-decoration:none;
+}
+.sk-shell-brand:hover .sk-shell-title{
+  color:var(--sk-primary-dark);
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+.sk-shell-logo{
+  width:42px;
+  height:42px;
+  border-radius:15px;
+  background:linear-gradient(135deg,var(--sk-primary),#7c95aa);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:950;
+  letter-spacing:-.06em;
+  box-shadow:0 14px 28px rgba(81,109,135,.18);
+  flex:0 0 auto;
+}
+.sk-shell-logo.is-small{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  font-size:13px;
+}
+.sk-shell-title-wrap{min-width:0}
+.sk-shell-eyebrow{
+  color:var(--sk-soft);
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sk-shell-title{
+  margin-top:1px;
+  font-size:18px;
+  font-weight:950;
+  line-height:1.18;
+  letter-spacing:-.04em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sk-shell-subtitle{
+  margin-top:2px;
+  color:var(--sk-muted);
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sk-shell-nav{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:7px;
+}
+.sk-shell-nav a,
+.sk-shell-nav button{
+  border:0;
+  background:transparent;
+  text-decoration:none;
+  color:var(--sk-muted);
+  border-radius:999px;
+  padding:7px 11px;
+  font-size:13px;
+  font-weight:950;
+  line-height:1.1;
+  cursor:pointer;
+}
+.sk-shell-nav a:hover,
+.sk-shell-nav button:hover{
+  color:var(--sk-primary-dark);
+  background:rgba(81,109,135,.07);
+}
+.sk-shell-nav .is-active{
+  background:var(--sk-primary);
+  color:white;
+}
+.sk-shell-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+.sk-shell-divider{height:1px;background:var(--sk-line-soft)}
+.sk-header-spec-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.sk-header-spec-card{
+  border:1px solid var(--sk-line-soft);
+  background:rgba(237,243,246,.48);
+  border-radius:16px;
+  padding:13px;
+}
+.sk-header-spec-card strong{display:block;margin-bottom:5px}
+.sk-header-spec-card span{
+  display:block;
+  color:var(--sk-muted);
+  font-size:13px;
+  line-height:1.55;
+}
+.sk-runtime-footer{
+  min-height:44px;
+  border:1px solid var(--sk-line-soft);
+  background:rgba(251,251,248,.94);
+  border-radius:18px;
+  box-shadow:var(--sk-shadow-soft);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--sk-muted);
+  font-size:12px;
+}
+.sk-runtime-footer.is-plain{box-shadow:none}
+.sk-runtime-footer-left,
+.sk-runtime-footer-right{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.sk-runtime-footer-center{
+  flex:0 0 auto;
+  color:var(--sk-soft);
+  font-weight:950;
+  font-variant-numeric:tabular-nums;
+}
+.sk-runtime-footer-title{
+  font-weight:950;
+  color:var(--sk-text);
+  margin-right:2px;
+}
+.sk-runtime-status-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--sk-ok);
+  box-shadow:0 0 0 4px rgba(95,138,121,.12);
+}
+.sk-runtime-status-dot.is-warn{background:var(--sk-warn);box-shadow:0 0 0 4px rgba(192,154,95,.14)}
+.sk-runtime-status-dot.is-danger{background:var(--sk-danger);box-shadow:0 0 0 4px rgba(176,111,106,.14)}
+.sk-runtime-kv{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+}
+.sk-runtime-kv span{color:var(--sk-soft);font-weight:900}
+.sk-runtime-kv strong{color:var(--sk-muted);font-weight:950}
+.sk-runtime-footer-stack{display:grid;gap:10px}
+
+/* Original-style footer traffic lights: no pill, no badge box. */
+.sk-runtime-traffic,
+.skhps-footer-right{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  min-width:0;
+}
+.sk-runtime-lamp,
+.sk-runtime-css-refresh,
+.skhps-footer-lamp,
+.skhps-footer-css-refresh{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--sk-text);
+  padding:0;
+  font:inherit;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.sk-runtime-css-refresh,
+.skhps-footer-css-refresh{cursor:pointer}
+.sk-runtime-toggle,
+.skhps-footer-runtime-toggle{
+  border:0;
+  background:transparent;
+  color:var(--sk-text);
+  padding:0 2px;
+  font:inherit;
+  font-size:13px;
+  font-weight:950;
+  line-height:1;
+  cursor:pointer;
+}
+.sk-runtime-toggle:hover,
+.skhps-footer-runtime-toggle:hover{color:var(--sk-primary-dark)}
+
+/* =========================================================
+   20 / CURRENT SKHPS HEADER + FOOTER DISPLAY DEMO
+   參考目前 skhpsv2/assets/js/header.js / footer.js 的實際掛載結構。
+========================================================= */
+.skhps-live-header-slot[hidden],
+.skhps-live-footer-slot[hidden],
+.skhps-runtime-tail[hidden]{display:none!important}
+.skhps-live-header-slot{
+  position:sticky;
+  top:0;
+  z-index:80;
+  padding:12px 18px 0;
+  background:linear-gradient(180deg,rgba(236,239,243,.98),rgba(236,239,243,.74),rgba(236,239,243,0));
+  backdrop-filter:blur(10px);
+}
+.skhps-header{color:var(--sk-text)}
+.skhps-header-inner{
+  max-width:1480px;
+  margin:0 auto;
+  min-height:62px;
+  border:1px solid var(--sk-line-soft);
+  border-radius:var(--sk-radius-lg);
+  background:rgba(251,251,248,.96);
+  box-shadow:var(--sk-shadow-soft);
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.skhps-header-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  color:inherit;
+  text-decoration:none;
+}
+.skhps-header-brand:hover .skhps-header-brand-main{
+  color:var(--sk-primary-dark);
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+.skhps-header-brand-mark{
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--sk-primary),#7c95aa);
+  color:#fff;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:950;
+  letter-spacing:-.05em;
+  box-shadow:0 14px 28px rgba(81,109,135,.18);
+  flex:0 0 auto;
+}
+.skhps-header-brand-copy{min-width:0;display:grid;gap:1px}
+.skhps-header-brand-main{
+  color:var(--sk-text);
+  font-size:17px;
+  font-weight:950;
+  letter-spacing:-.04em;
+  line-height:1.12;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.skhps-header-brand-sub{
+  color:var(--sk-muted);
+  font-size:12px;
+  font-weight:850;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.skhps-header-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  flex:0 0 auto;
+}
+.skhps-btn{
+  min-height:34px;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:8px 14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:var(--sk-text);
+  background:var(--sk-panel);
+  text-decoration:none;
+  font-size:13px;
+  font-weight:950;
+  line-height:1;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease,transform .15s ease;
+}
+.skhps-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(31,45,55,.10)}
+.skhps-btn-primary{background:var(--sk-primary);color:#fff}
+.skhps-btn-primary:hover{background:var(--sk-primary-dark)}
+.skhps-btn-outline{background:transparent;border-color:var(--sk-line);color:var(--sk-primary)}
+.skhps-btn-outline:hover{background:rgba(81,109,135,.06);border-color:rgba(81,109,135,.38)}
+.sk-display-control{
+  border:1px solid rgba(81,109,135,.18);
+  background:rgba(237,243,246,.58);
+  border-radius:18px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.sk-display-control-copy{
+  color:var(--sk-muted);
+  font-size:13px;
+  font-weight:850;
+  line-height:1.55;
+}
+.sk-display-control-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.skhps-live-footer-slot{
+  position:sticky;
+  bottom:0;
+  z-index:90;
+  max-width:1480px;
+  margin:0 auto;
+  border:1px solid var(--sk-line-soft);
+  border-radius:18px 18px 0 0;
+  background:rgba(251,251,248,.96);
+  box-shadow:0 -16px 40px rgba(31,45,55,.12);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--sk-muted);
+  font-size:12px;
+  backdrop-filter:blur(12px);
+}
+.skhps-footer-left,
+.skhps-footer-center,
+.skhps-footer-right{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0}
+.skhps-footer-left{overflow:hidden;flex:1 1 auto;justify-content:flex-start}
+.skhps-footer-center{
+  flex:0 0 auto;
+  color:var(--sk-text);
+  font-weight:950;
+  font-variant-numeric:tabular-nums;
+}
+.skhps-footer-right{justify-content:flex-end;flex:1 1 auto}
+.skhps-footer-runtime-line{display:flex;align-items:center;flex-wrap:wrap;gap:6px;min-width:0;row-gap:2px}
+.skhps-footer-env-chip{display:inline-flex;align-items:center;gap:4px;font-weight:950;white-space:nowrap}
+.skhps-footer-env{
+  border:0;
+  background:transparent;
+  color:var(--sk-primary);
+  font:inherit;
+  font-weight:950;
+  padding:2px 3px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.skhps-footer-env:hover{background:rgba(81,109,135,.08);color:var(--sk-primary-dark)}
+.skhps-footer-separator{color:var(--sk-line);font-weight:900}
+.skhps-runtime-tail{max-width:1480px;margin:12px auto 0;padding:0 14px 12px}
+/* Runtime panel intentionally keeps the original dark engineering / diagnostics look. */
+.skhps-runtime-panel{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:0;
+  background:#101820;
+  color:#f5f7fb;
+  box-shadow:0 -14px 34px rgba(15,23,42,.16);
+  padding:16px;
+  display:grid;
+  gap:14px;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+  font-size:13px;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+.skhps-runtime-panel *{box-sizing:border-box;min-width:0}
+.skhps-runtime-panel strong{color:#b8d7ff}
+.skhps-runtime-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:8px;margin:0 0 4px}
+.skhps-runtime-summary-card{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:rgba(255,255,255,.04);
+  padding:10px;
+}
+.skhps-runtime-summary-card strong{display:block;color:#9fb1c7;font-size:12px;font-weight:750;margin-bottom:3px}
+.skhps-runtime-summary-card span{display:block;color:#fff;font-size:15px;font-weight:800;line-height:1.35;overflow-wrap:anywhere}
+.skhps-runtime-section{display:grid;gap:6px;margin:0 0 2px}
+.skhps-runtime-title{margin:0;color:#fff;font-size:21px;font-weight:850;letter-spacing:-.03em}
+.skhps-runtime-row{
+  display:grid;
+  grid-template-columns:minmax(120px,auto) minmax(0,1fr);
+  gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  padding:3px 0;
+  align-items:start;
+}
+.skhps-runtime-row strong{color:#b8d7ff;font-weight:850;overflow-wrap:anywhere}
+.skhps-runtime-row span{display:block;color:#d8e1ef;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+.skhps-runtime-ok{color:#8ee69f!important}
+.skhps-runtime-fail{color:#ff9a9a!important}
+.skhps-runtime-waiting{color:#ffd479!important}
+.skhps-runtime-checklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:6px}
+.skhps-runtime-checkitem{display:flex;align-items:flex-start;gap:8px;border:1px solid rgba(255,255,255,.10);border-radius:6px;padding:7px;background:rgba(255,255,255,.035)}
+.skhps-runtime-checkmark{flex:0 0 auto;width:34px;text-align:center;font-weight:900;color:#8ee69f}
+.skhps-runtime-checkbody{display:grid;gap:1px}
+.skhps-runtime-checkname{color:#fff;font-weight:850}
+.skhps-runtime-checkmeta{color:#aebbd0;font-size:12px;overflow-wrap:anywhere}
+.skhps-runtime-call{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);border-radius:8px;padding:9px;display:grid;gap:4px}
+.skhps-runtime-call-head{display:flex;justify-content:space-between;gap:8px}
+.skhps-runtime-call-title{font-weight:850;color:#fff;overflow-wrap:anywhere}
+.skhps-runtime-call-status{font-weight:900;white-space:nowrap}
+.skhps-runtime-call-meta{color:#aebbd0;font-size:12px;overflow-wrap:anywhere}
+.skhps-runtime-log-box{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+  padding:10px;
+  color:#d8e1ef;
+  font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+  font-size:12px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+@media(max-width:900px){
+  .skhps-runtime-summary{grid-template-columns:1fr 1fr}
+  .skhps-live-footer-slot{align-items:flex-start;flex-direction:column}
+  .skhps-footer-left,.skhps-footer-right{justify-content:flex-start;flex:0 1 auto}
+}
+@media(max-width:767px){
+  .skhps-live-header-slot{padding:8px 10px 0}
+  .skhps-header-inner{border-radius:18px;padding:10px 12px}
+  .skhps-header-brand-mark{width:36px;height:36px;border-radius:13px;font-size:12px}
+  .skhps-header-brand-main{font-size:16px}
+  .skhps-header-actions .skhps-btn-outline{display:none}
+  .skhps-live-footer-slot{left:8px;right:8px;margin:0 8px;font-size:11px;border-radius:16px 16px 0 0}
+  .skhps-runtime-summary{grid-template-columns:1fr}
+}
+
+/* =========================================================
+   19 / RULES
+========================================================= */
+.sk-rule-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+}
+.sk-rule{
+  background:rgba(251,251,248,.96);
+  border:1px solid var(--sk-line-soft);
+  border-radius:12px;
+  padding:14px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.sk-rule-icon{
+  color:var(--sk-primary);
+  font-weight:950;
+}
+
+/* =========================================================
+   20 / UTILITIES
+========================================================= */
+.sk-stack{display:grid;gap:12px}
+.sk-center{display:flex;align-items:center;justify-content:center}
+.sk-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sk-mt-2{margin-top:8px}
+.sk-mt-3{margin-top:12px}
+.sk-mt-4{margin-top:16px}
+.sk-mt-5{margin-top:20px}
+.sk-mb-0{margin-bottom:0}
+.sk-nowrap{white-space:nowrap}
+
+/* =========================================================
+   21 / RESPONSIVE
+========================================================= */
+@media(max-width:1100px){
+  .sk-token-grid{grid-template-columns:repeat(6,1fr)}
+  .sk-kanban{grid-template-columns:repeat(2,1fr)}
+  .sk-rule-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .sk-col-2,.sk-col-3,.sk-col-4,.sk-col-5,.sk-col-6,.sk-col-7,.sk-col-8{
+    grid-column:span 12;
+  }
+  .sk-form-row{grid-template-columns:1fr}
+  .sk-topbar{flex-direction:column;align-items:flex-start}
+  .sk-timer-meta{grid-template-columns:1fr}
+  .sk-media-grid{grid-template-columns:1fr}
+  .sk-detail-grid{grid-template-columns:1fr}
+}
+@media(max-width:767px){
+  .sk-page{padding:22px 14px 52px}
+  .sk-top-meta{align-items:flex-start;flex-direction:column}
+  .sk-hero{padding:24px;border-radius:24px}
+  .sk-hero h1{font-size:29px}
+  .sk-section-title{display:block}
+  .sk-section-title h2{margin-top:6px}
+  .sk-token-grid{grid-template-columns:repeat(2,1fr)}
+  .sk-kanban{grid-template-columns:1fr}
+  .sk-rule-grid{grid-template-columns:1fr}
+  .sk-timer-display{font-size:44px}
+
+  .sk-list-head{display:none}
+  .sk-row-main{
+    grid-template-columns:0 1fr auto 34px;
+    gap:10px;
+  }
+  .sk-list.is-reorder-mode .sk-row-main{
+    grid-template-columns:34px 1fr auto 34px;
+  }
+  .sk-expand-list .sk-row-main{
+    grid-template-columns:0 34px 1fr auto 34px;
+  }
+  .sk-expand-list.is-reorder-mode .sk-row-main{
+    grid-template-columns:34px 34px 1fr auto 34px;
+  }
+  .sk-row-main .mobile-hide{
+    display:none;
+  }
+}
+
+
+@media(max-width:900px){
+  .sk-shell-header-row{align-items:flex-start;flex-direction:column}
+  .sk-shell-actions{justify-content:flex-start}
+  .sk-header-spec-grid{grid-template-columns:1fr}
+  .sk-runtime-footer{align-items:flex-start;flex-direction:column}
+  .sk-runtime-footer-right{justify-content:flex-start}
+}
+@media(max-width:767px){
+  .sk-shell-title{font-size:17px}
+  .sk-shell-logo{width:38px;height:38px;border-radius:14px}
+  .sk-shell-nav{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}
+  .sk-shell-nav a,.sk-shell-nav button{flex:0 0 auto}
+  .sk-shell-actions .sk-btn:not(.sk-btn-primary){display:none}
+  .sk-runtime-footer-left,.sk-runtime-footer-right{gap:6px}
+  .sk-runtime-kv{width:calc(50% - 3px)}
+  .sk-runtime-chip{padding:5px 8px}
+}
+
+</style>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var host = String(location.hostname || "").toLowerCase();
+      var params = new URLSearchParams(location.search || "");
+      var runtime = String(params.get("skhpsRuntime") || params.get("runtime") || "").trim();
+
+      var allowedRuntime = {
+        "local-dev": true,
+        dev: true,
+        prod: true
+      };
+
+      function runtimeBaseUrl(value) {
+        if (value === "local-dev") {
+          return "http://127.0.0.1:5500/skhpsv2/";
+        }
+
+        if (value === "dev") {
+          return "https://dev-skhps.jonaminz.com/";
+        }
+
+        return "https://skhps.jonaminz.com/";
+      }
+
+      function currentRuntime() {
+        if (host === "127.0.0.1" || host === "localhost" || host === "") {
+          return "local-dev";
+        }
+
+        if (allowedRuntime[runtime]) {
+          return runtime;
+        }
+
+        if (
+          host.indexOf("dev-") === 0 ||
+          host.indexOf("dev.") === 0 ||
+          host.indexOf("dev-skhps") >= 0
+        ) {
+          return "dev";
+        }
+
+        return "prod";
+      }
+
+      var resolvedRuntime = currentRuntime();
+
+      window.SKHPS_ENTRY_VERSION =
+        resolvedRuntime === "prod"
+          ? "prod"
+          : String(Date.now());
+      window.SKHPS_ENTRY_BASE_URL = runtimeBaseUrl(resolvedRuntime);
+
+      /*
+        目前 app-entry / entry-core 實作仍以 SKHPS_APP_CARD_URL 為穩定入口。
+        SKHPS_APP_MANIFEST_URL 先同步宣告，等水庫正式切到 app.json 時可直接吃。
+      */
+      window.SKHPS_APP_CARD_URL = "app-card.json";
+      window.SKHPS_APP_MANIFEST_URL = "app.json";
+
+      document.documentElement.setAttribute("data-skhps-runtime", resolvedRuntime);
+      document.documentElement.setAttribute("data-skhps-entry-scope", "external-app");
+
+      document.write(
+        '<link rel="stylesheet" href="' +
+        window.SKHPS_ENTRY_BASE_URL +
+        'assets/css/skhps-loading.css?v=' +
+        encodeURIComponent(window.SKHPS_ENTRY_VERSION) +
+        '">'
+      );
+
+      document.write(
+        '<script src="' +
+        window.SKHPS_ENTRY_BASE_URL +
+        'assets/js/app-entry.js?v=' +
+        encodeURIComponent(window.SKHPS_ENTRY_VERSION) +
+        '"><\/script>'
+      );
+    })();
+  </script>
+</head>
+
+<body class="skhps-body">
+  <!-- Header 由 skhpsv2 共用 header.js 掛載 -->
+  <header id="header" class="skhps-header" data-skhps-header></header>
+
+  <main class="skhps-page skhps-smoke-page" data-skhps-main>
+<div class="sk-page">
+
+  <header class="sk-top-meta">
+    <div class="sk-system-title">Theme40 Design System</div>
+    <div class="sk-system-sub">Indigo Paper Admin / SKHPS / Handoff</div>
+  </header>
+
+  <section class="sk-hero">
+    <div class="sk-section-title" style="margin-bottom:0">
+      <div class="sk-num">Theme40 / Full Template</div>
+    </div>
+    <h1>SKHPS 統一設計系統</h1>
+    <p>
+      這份是完整 handoff HTML。重點是把所有頁面都收斂到同一套 Theme40 元件：
+      button、link、form、select、toggle、table/list、expand detail、loading、modal、drag/drop。
+    </p>
+  </section>
+
+  <!-- =======================================================
+       01 TOKENS
+  ======================================================== -->
+  <section id="tokens" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">01 / Tokens</div>
+      <h2>設計系統色票與基礎設定</h2>
+    </div>
+
+    <div class="sk-card compact">
+      <div class="sk-token-grid">
+        <div class="sk-token"><div class="sk-token-box" style="background:#eceff3"></div><div class="sk-token-name">Background</div><div class="sk-token-code">#ECEFF3</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#fbfbf8"></div><div class="sk-token-name">Paper</div><div class="sk-token-code">#FBFBF8</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#edf3f6"></div><div class="sk-token-name">Panel</div><div class="sk-token-code">#EDF3F6</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#516d87"></div><div class="sk-token-name">Primary</div><div class="sk-token-code">#516D87</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#40596f"></div><div class="sk-token-name">Primary Dark</div><div class="sk-token-code">#40596F</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#a78d72"></div><div class="sk-token-name">Accent</div><div class="sk-token-code">#A78D72</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#5f8a79"></div><div class="sk-token-name">Success</div><div class="sk-token-code">#5F8A79</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#c09a5f"></div><div class="sk-token-name">Warning</div><div class="sk-token-code">#C09A5F</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#b06f6a"></div><div class="sk-token-name">Danger</div><div class="sk-token-code">#B06F6A</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#5b7f99"></div><div class="sk-token-name">Info</div><div class="sk-token-code">#5B7F99</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#23323d"></div><div class="sk-token-name">Text</div><div class="sk-token-code">#23323D</div></div>
+        <div class="sk-token"><div class="sk-token-box" style="background:#62717c"></div><div class="sk-token-name">Muted</div><div class="sk-token-code">#62717C</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       02 TYPOGRAPHY + 03 BUTTONS
+  ======================================================== -->
+  <div class="sk-grid">
+    <section id="typography" class="sk-section sk-col-5">
+      <div class="sk-section-title">
+        <div class="sk-num">02 / Typography</div>
+        <h2>文字階層</h2>
+      </div>
+
+      <div class="sk-card">
+        <p class="sk-h1">H1 主標題 / Page Title</p>
+        <p class="sk-h2">H2 區塊標題 / Section Title</p>
+        <p class="sk-h3">H3 卡片標題 / Card Title</p>
+        <p class="sk-body">Body 內文。系統說明、操作提醒、一般段落都用這個節奏。</p>
+        <p class="sk-small">Small 輔助文字、欄位 help text、次要資訊。</p>
+        <p class="sk-caption">Caption runtime, version, timestamp, debug meta.</p>
+      </div>
+    </section>
+
+    <section id="buttons" class="sk-section sk-col-7">
+      <div class="sk-section-title">
+        <div class="sk-num">03 / Buttons</div>
+        <h2>按鈕元件</h2>
+      </div>
+
+      <div class="sk-card sk-stack">
+        <div>
+          <div class="sk-card-sub">實心按鈕 / Solid Buttons</div>
+          <div class="sk-btn-row sk-mt-3">
+            <button class="sk-btn sk-btn-primary">Primary</button>
+            <button class="sk-btn sk-btn-accent">Accent</button>
+            <button class="sk-btn sk-btn-ok">Success</button>
+            <button class="sk-btn sk-btn-warn">Warning</button>
+            <button class="sk-btn sk-btn-danger">Danger</button>
+            <button class="sk-btn sk-btn-info">Info</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="sk-card-sub">次要按鈕 / Secondary Buttons</div>
+          <div class="sk-btn-row sk-mt-3">
+            <button class="sk-btn sk-btn-outline">Outline</button>
+            <button class="sk-btn sk-btn-ghost">Ghost</button>
+            <button class="sk-btn sk-btn-primary" disabled>Disabled</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="sk-card-sub">文字連結 / Link：箭頭直接寫在文字內</div>
+          <div class="sk-btn-row sk-mt-3">
+            <button class="sk-link">查看詳細資料→</button>
+            <button class="sk-link sk-link-muted">前往設定→</button>
+            <button class="sk-link sk-link-danger">查看錯誤紀錄→</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="sk-card-sub">尺寸變化 / Size Variants：外框、高度、padding、圓角、icon 都一起變</div>
+          <div class="sk-btn-row sk-mt-3">
+            <button class="sk-btn sk-btn-lg sk-btn-primary">＋ Large Button</button>
+            <button class="sk-btn sk-btn-primary">＋ Medium Button</button>
+            <button class="sk-btn sk-btn-sm sk-btn-primary">＋ Small Button</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="sk-card-sub">Icon Buttons：順序固定 Add → Edit → Delete</div>
+          <div class="sk-btn-row sk-mt-3">
+            <button class="sk-btn sk-icon-btn sk-btn-outline" aria-label="新增">＋</button>
+            <button class="sk-btn sk-icon-btn sk-btn-outline" aria-label="編輯"><span class="sk-edit-mark">✎</span></button>
+            <button class="sk-btn sk-icon-btn sk-btn-danger" aria-label="刪除">🗑</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =======================================================
+       04 FORMS
+  ======================================================== -->
+  <section id="forms" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">04 / Forms</div>
+      <h2>表單元件</h2>
+    </div>
+
+    <div class="sk-grid">
+      <div class="sk-card sk-col-6">
+        <div class="sk-card-head">
+          <div class="sk-card-title-row">
+            <div class="sk-card-icon circle">☰</div>
+            <div>
+              <h3 class="sk-card-title">Basic Fields</h3>
+              <div class="sk-card-sub">基礎欄位填寫</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-form-row">
+          <label class="sk-field">
+            <span class="sk-label">姓名</span>
+            <span class="sk-input-wrap">
+              <span class="sk-input-icon">👤</span>
+              <input class="sk-input has-icon" placeholder="請輸入姓名">
+            </span>
+          </label>
+
+          <label class="sk-field">
+            <span class="sk-label">職級 / Native select</span>
+            <select class="sk-select">
+              <option>VS</option>
+              <option>Fellow</option>
+              <option>Resident</option>
+              <option>NP</option>
+            </select>
+            <span class="sk-help">簡單 Theme40 版。</span>
+          </label>
+        </div>
+
+        <label class="sk-field">
+          <span class="sk-label">備註</span>
+          <textarea class="sk-textarea" placeholder="請輸入備註"></textarea>
+        </label>
+
+        <div class="sk-card-desc" style="text-align:right">* 標示 <span style="color:var(--sk-danger)">*</span> 為必填欄位</div>
+      </div>
+
+      <div class="sk-card sk-col-6">
+        <div class="sk-card-head">
+          <div class="sk-card-title-row">
+            <div class="sk-card-icon circle accent">⚙</div>
+            <div>
+              <h3 class="sk-card-title">Controls</h3>
+              <div class="sk-card-sub">控制項選擇</div>
+            </div>
+          </div>
+        </div>
+
+        <label class="sk-field">
+          <span class="sk-label">完全自訂下拉示範 / Custom select</span>
+          <div class="sk-fake-select">
+            <button class="sk-fake-select-button" type="button" id="fakeSelectBtn">Resident</button>
+            <div class="sk-fake-select-menu" id="fakeSelectMenu">
+              <button class="sk-fake-select-option" type="button">VS</button>
+              <button class="sk-fake-select-option" type="button">Fellow</button>
+              <button class="sk-fake-select-option is-active" type="button">Resident</button>
+              <button class="sk-fake-select-option" type="button">NP</button>
+            </div>
+          </div>
+          <span class="sk-help">需要完整下拉風格時用 custom select。</span>
+        </label>
+
+        <label class="sk-field">
+          <span class="sk-label">選項開關</span>
+          <div class="sk-option-row">
+            <label class="sk-option">
+              <input type="checkbox" checked>
+              <span class="sk-option-mark"></span>
+              <span>顯示於首頁</span>
+            </label>
+            <label class="sk-option is-radio">
+              <input type="radio" name="pos" checked>
+              <span class="sk-option-mark"></span>
+              <span>前台</span>
+            </label>
+            <label class="sk-option is-radio">
+              <input type="radio" name="pos">
+              <span class="sk-option-mark"></span>
+              <span>後台</span>
+            </label>
+          </div>
+        </label>
+
+        <div class="sk-field">
+          <span class="sk-label">狀態開關</span>
+          <div class="sk-mini-status-row">
+            <label class="sk-mini-status-control">
+              <input type="checkbox" checked id="miniStatus">
+              <span class="sk-mini-status-track">
+                <span class="sk-mini-status-thumb"></span>
+                <span class="sk-mini-status-label is-off">停用</span>
+                <span class="sk-mini-status-label is-on">啟用</span>
+              </span>
+            </label>
+            <span class="sk-mini-status-text" id="miniStatusText">啟用中</span>
+          </div>
+          <span class="sk-help">左側紅色停用，右側綠色啟用；只有小膠囊本體可點。</span>
+        </div>
+
+        <div class="sk-info-strip sk-mt-4">
+          <span>ⓘ</span>
+          <span>狀態開關使用小型膠囊，不佔空間。</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       05 TABLES
+  ======================================================== -->
+<section id="tables" class="sk-section">
+    <div class="sk-grid">
+      <div class="sk-card sk-col-6">
+        <h3 class="sk-card-title">A. Swipe Action Table</h3>
+        <p class="sk-card-desc">快速管理用。點 row 或右滑打開左側「編輯 / 刪除」。不展開 detail。</p>
+      </div>
+      <div class="sk-card sk-col-6">
+        <h3 class="sk-card-title">B. Expand Detail Table</h3>
+        <p class="sk-card-desc">看詳細資料用。點 row 展開 detail，並同步打開左側 action rail；detail 仍然是紙感卡片，不沾藍紅背景。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">05A / Swipe Action Table</div>
+      <h2>傳統 table：點一下 / 右滑顯示編輯刪除</h2>
+    </div>
+
+    <div class="sk-card sk-table-shell">
+      <div class="sk-table-toolbar">
+        <div class="sk-table-toolbar-left">
+          <button class="sk-btn sk-btn-outline" id="swipeReorderBtn" type="button">↕ 調整順序</button>
+          <span class="sk-table-mode-text" id="swipeModeText">預設模式：點 row 或右滑，顯示編輯 / 刪除。</span>
+        </div>
+        <div class="sk-table-toolbar-right">
+          <button class="sk-btn sk-btn-primary" type="button">新增資料</button>
+          <button class="sk-btn sk-btn-outline" type="button">匯出</button>
+        </div>
+      </div>
+
+      <div class="sk-table-wrap">
+        <table class="sk-table sk-swipe-table" id="swipeTable" aria-label="Swipe Action Table">
+          <colgroup>
+            <col class="col-project"><col class="col-env"><col class="col-position"><col class="col-status"><col class="col-version"><col class="col-updated">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>專案</th><th>環境</th><th>位置</th><th>狀態</th><th>版本</th><th>最後報到</th>
+            </tr>
+          </thead>
+          <tbody id="swipeTbody"></tbody>
+        </table>
+      </div>
+
+      <div class="sk-alert sk-alert-warn" id="swipeStatus">點 row 會切換 action open/close；右滑也可以打開；左滑可收回。排序模式會收起所有 action。</div>
+    </div>
+  </section>
+
+  <section class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">05B / Expand Detail Table</div>
+      <h2>傳統 table：點 row 展開 detail</h2>
+    </div>
+
+    <div class="sk-card sk-table-shell">
+      <div class="sk-table-toolbar">
+        <div class="sk-table-toolbar-left">
+          <button class="sk-btn sk-btn-outline" id="expandReorderBtn" type="button">↕ 調整順序</button>
+          <button class="sk-btn sk-btn-outline" id="expandCollapseBtn" type="button">收合目前列</button>
+          <span class="sk-table-mode-text" id="expandModeText">預設模式：點 row 展開 detail；右滑只開 action。</span>
+        </div>
+        <div class="sk-table-toolbar-right">
+          <button class="sk-btn sk-btn-primary" type="button">新增資料</button>
+          <button class="sk-btn sk-btn-outline" type="button">匯出</button>
+        </div>
+      </div>
+
+      <div class="sk-table-wrap">
+        <table class="sk-table sk-expand-table" id="expandTable" aria-label="Expand Detail Table">
+          <colgroup>
+            <col class="col-project"><col class="col-env"><col class="col-position"><col class="col-status"><col class="col-version"><col class="col-updated">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>專案</th><th>環境</th><th>位置</th><th>狀態</th><th>版本</th><th>最後報到</th>
+            </tr>
+          </thead>
+          <tbody id="expandTbody"></tbody>
+        </table>
+      </div>
+
+      <div class="sk-alert sk-alert-info" id="expandStatus">點 row：展開 detail 並自動打開 action rail。右滑 row：只打開 action rail，不展開。點另一 row 時會補償新箭頭位置。</div>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       06 FEEDBACK
+  ======================================================== -->
+  <section id="feedback" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">06 / Feedback</div>
+      <h2>反饋元件</h2>
+    </div>
+
+    <div class="sk-grid">
+      <div class="sk-alert sk-alert-ok sk-col-3"><strong>Success</strong><br>資料已成功儲存。</div>
+      <div class="sk-alert sk-alert-warn sk-col-3"><strong>Warning</strong><br>目前有未送出的修改。</div>
+      <div class="sk-alert sk-alert-danger sk-col-3"><strong>Error</strong><br>後端連線失敗，請查看 runtime log。</div>
+      <div class="sk-alert sk-alert-info sk-col-3"><strong>Info</strong><br>目前使用 DEV runtime。</div>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       07 LOADING + 08 MODAL
+  ======================================================== -->
+  <div class="sk-grid">
+    <section id="loading" class="sk-section sk-col-6">
+      <div class="sk-section-title">
+        <div class="sk-num">07 / Loading</div>
+        <h2>載入狀態</h2>
+      </div>
+
+      <div class="sk-grid">
+        <div class="sk-card sk-col-4 sk-center" style="min-height:150px">
+          <div>
+            <div class="sk-card-sub sk-text-center">Spinner</div>
+            <div class="sk-center sk-mt-4"><div class="sk-spinner"></div></div>
+          </div>
+        </div>
+
+        <div class="sk-card sk-col-4 sk-stack" style="min-height:150px">
+          <div class="sk-card-sub sk-text-center">Skeleton</div>
+          <div class="sk-skeleton"></div>
+          <div class="sk-skeleton" style="width:82%"></div>
+          <div class="sk-skeleton" style="width:56%"></div>
+        </div>
+
+        <div class="sk-card sk-col-4">
+          <div class="sk-empty">
+            <div class="sk-h3">No Records</div>
+            <p class="sk-small">目前沒有任何資料。</p>
+            <button class="sk-btn sk-btn-sm sk-btn-primary">新增資料</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modal" class="sk-section sk-col-6">
+      <div class="sk-section-title">
+        <div class="sk-num">08 / Modal</div>
+        <h2>彈窗</h2>
+      </div>
+
+      <div class="sk-card sk-modal-demo">
+        <div class="sk-modal">
+          <div class="sk-modal-head">
+            <div>
+              <h3 class="sk-card-title">確認刪除？</h3>
+              <p class="sk-card-desc">已儲存的資料刪除前需要 confirm；未儲存刪除則是「不儲存」。</p>
+            </div>
+            <button class="sk-btn sk-btn-ghost sk-icon-btn">×</button>
+          </div>
+          <div class="sk-btn-row" style="justify-content:flex-end">
+            <button class="sk-btn sk-btn-outline">取消</button>
+            <button class="sk-btn sk-btn-danger">刪除</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =======================================================
+       09 TIMER + 10 QR MEDIA
+  ======================================================== -->
+  <div class="sk-grid">
+    <section id="timer" class="sk-section sk-col-6">
+      <div class="sk-section-title">
+        <div class="sk-num">09 / Timer</div>
+        <h2>定時器</h2>
+      </div>
+
+      <div class="sk-card sk-timer">
+        <span class="sk-badge sk-badge-ok"><span class="sk-dot"></span> RUNNING</span>
+        <div class="sk-timer-display">01:25:34</div>
+        <div class="sk-timer-status"><span class="sk-dot"></span>計時中</div>
+        <div class="sk-btn-row sk-center">
+          <button class="sk-btn sk-btn-accent">Pause</button>
+          <button class="sk-btn sk-btn-outline">Reset</button>
+          <button class="sk-btn sk-btn-danger">Stop</button>
+        </div>
+        <div class="sk-timer-meta">
+          <div><strong>Start</strong><span>08:30</span></div>
+          <div><strong>Target</strong><span>90 min</span></div>
+          <div><strong>Owner</strong><span>Resident</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" class="sk-section sk-col-6">
+      <div class="sk-section-title">
+        <div class="sk-num">10 / QR & Media</div>
+        <h2>二維碼與媒體元件</h2>
+      </div>
+
+      <div class="sk-grid">
+        <div class="sk-card sk-col-4">
+          <div class="sk-card-sub sk-text-center">QR Code</div>
+          <div class="sk-qr sk-mt-3"></div>
+        </div>
+
+        <div class="sk-card sk-col-4">
+          <div class="sk-card-sub sk-text-center">Upload</div>
+          <div class="sk-upload sk-mt-3">
+            拖曳檔案到這裡
+            <div class="sk-mt-3">
+              <button class="sk-btn sk-btn-sm sk-btn-primary">選擇檔案</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-card sk-col-4">
+          <div class="sk-card-sub sk-text-center">Media Grid</div>
+          <div class="sk-media-grid sk-mt-3">
+            <div class="sk-media-item">圖片</div>
+            <div class="sk-media-item">PDF</div>
+            <div class="sk-media-item">影片</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =======================================================
+       11 DRAG DROP
+  ======================================================== -->
+  <section id="kanban" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">11 / Drag & Drop</div>
+      <h2>四象限拖曳（手機可用）</h2>
+    </div>
+
+    <div class="sk-card">
+      <p class="sk-card-desc sk-mt-0">支援手機觸控拖曳。拖曳卡片時會顯示「放到這邊」插入線，可同時決定象限與排序。</p>
+
+      <div class="sk-kanban sk-mt-3" id="demoKanban">
+        <div class="sk-lane" data-position="front" data-enabled="true">
+          <div class="sk-lane-title">前台啟用 <span class="sk-badge sk-badge-ok">ON</span></div>
+          <div class="sk-drag-card" data-app-id="quick-login"><strong>quick-login</strong><div class="sk-small">快速登入</div></div>
+          <div class="sk-drag-card" data-app-id="qr-signin"><strong>qr-signin</strong><div class="sk-small">QR 簽到</div></div>
+        </div>
+
+        <div class="sk-lane" data-position="backend" data-enabled="true">
+          <div class="sk-lane-title">後台啟用 <span class="sk-badge sk-badge-ok">ON</span></div>
+          <div class="sk-drag-card" data-app-id="css-setting"><strong>css-setting</strong><div class="sk-small">CSS Sheet 設定</div></div>
+        </div>
+
+        <div class="sk-lane" data-position="front" data-enabled="false">
+          <div class="sk-lane-title">前台停用 <span class="sk-badge sk-badge-warn">OFF</span></div>
+          <div class="sk-drag-card" data-app-id="old-signin"><strong>old-signin</strong><div class="sk-small">舊版簽到</div></div>
+        </div>
+
+        <div class="sk-lane" data-position="backend" data-enabled="false">
+          <div class="sk-lane-title">後台停用 <span class="sk-badge sk-badge-warn">OFF</span></div>
+          <div class="sk-drag-card" data-app-id="dressing-inventory"><strong>dressing-inventory</strong><div class="sk-small">庫存盤點領用</div></div>
+        </div>
+      </div>
+
+      <div class="sk-alert sk-alert-info sk-mt-4" id="dragStatus">
+        拖曳卡片到象限中的指定位置，這裡會顯示 appId、enabled、displayPosition 與 sort。
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- =======================================================
+       12 HEADER
+  ======================================================== -->
+  <section id="theme40-header" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">12 / Header</div>
+      <h2>共通頁首 / Clean Shell Header</h2>
+    </div>
+
+    <div class="sk-card sk-stack">
+      <p class="sk-card-desc sk-mt-0">
+        Header 是乾淨的共通導航殼，不是 runtime dashboard。它不顯示 PROD/DEV、Script、CSS、version；左側 brand 本身就是回首頁，右側只放登入/登出這類帳號動作。
+        外部 App 需要時可保留「回 SKHPS 首頁」。
+      </p>
+
+      <div class="sk-display-control">
+        <div class="sk-display-control-copy">
+          參考目前 <code>header.js</code>：實際掛載點是 <code>&lt;header id="header"&gt;</code>，左側 SKHPS / Plastic Surgery，右側預設只有登入。
+        </div>
+        <div class="sk-display-control-actions">
+          <button class="sk-btn sk-btn-sm sk-btn-primary" type="button" id="displayCurrentHeaderBtn">Display Header</button>
+          <button class="sk-btn sk-btn-sm sk-btn-outline" type="button" id="hideCurrentHeaderBtn">Hide</button>
+        </div>
+      </div>
+
+      <div class="sk-header-demo-stack">
+        <div class="sk-shell-header">
+          <div class="sk-shell-header-row">
+            <a class="sk-shell-brand" href="index.html" aria-label="回到首頁">
+              <div class="sk-shell-logo">SK</div>
+              <div class="sk-shell-title-wrap">
+                <div class="sk-shell-eyebrow">Front Header</div>
+                <div class="sk-shell-title">SKHPS</div>
+                <div class="sk-shell-subtitle">Plastic Surgery</div>
+              </div>
+            </a>
+            <div class="sk-shell-actions">
+              <button class="sk-btn sk-btn-sm sk-btn-primary">登入</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-shell-header">
+          <div class="sk-shell-header-row">
+            <a class="sk-shell-brand" href="index.html" aria-label="回到首頁">
+              <div class="sk-shell-logo">SK</div>
+              <div class="sk-shell-title-wrap">
+                <div class="sk-shell-eyebrow">Signed-in Header</div>
+                <div class="sk-shell-title">SKHPS</div>
+                <div class="sk-shell-subtitle">Plastic Surgery</div>
+              </div>
+            </a>
+            <div class="sk-shell-actions">
+              <button class="sk-btn sk-btn-sm sk-btn-outline">登出</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-shell-header is-compact">
+          <div class="sk-shell-header-row">
+            <a class="sk-shell-brand" href="index.html" aria-label="回到 SKHPS 首頁">
+              <div class="sk-shell-logo is-small">APP</div>
+              <div class="sk-shell-title-wrap">
+                <div class="sk-shell-eyebrow">External App Header</div>
+                <div class="sk-shell-title">敷料庫存盤點領用</div>
+                <div class="sk-shell-subtitle">appId: dressing-inventory</div>
+              </div>
+            </a>
+            <div class="sk-shell-actions">
+              <button class="sk-btn sk-btn-sm sk-btn-outline">回 SKHPS 首頁</button>
+              <button class="sk-btn sk-btn-sm sk-btn-primary">登入</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sk-header-spec-grid">
+        <div class="sk-header-spec-card"><strong>Brand = Home</strong><span>不要另做返回首頁按鈕；使用者點 SKHPS / app title 即回首頁。</span></div>
+        <div class="sk-header-spec-card"><strong>No Runtime</strong><span>Header 不顯示 PROD/DEV、Script、CSS、version；狀態交給 Footer。</span></div>
+        <div class="sk-header-spec-card"><strong>Auth Actions</strong><span>右側保留登入/登出。外部 App 可另外保留回 SKHPS 首頁。</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       13 FOOTER
+  ======================================================== -->
+  <section id="theme40-footer" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">13 / Footer</div>
+      <h2>Runtime Status Footer</h2>
+    </div>
+
+    <div class="sk-card sk-stack">
+      <p class="sk-card-desc sk-mt-0">
+        Footer 是低調 runtime 狀態列。左側保留環境摘要，中間保留不搶眼版本號；右側維持目前 footer.js 的原始 traffic light 樣式，不改成 Theme40 badge 或大膠囊。
+      </p>
+
+      <div class="sk-display-control">
+        <div class="sk-display-control-copy">
+          參考目前 <code>footer.js</code>：實際掛載點是 <code>[data-skhps-footer]</code>，右側是 Gate / Config / Backend / CSS / Data / ▲ 的原始狀態燈。
+        </div>
+        <div class="sk-display-control-actions">
+          <button class="sk-btn sk-btn-sm sk-btn-primary" type="button" id="displayCurrentFooterBtn">Display Footer</button>
+          <button class="sk-btn sk-btn-sm sk-btn-outline" type="button" id="hideCurrentFooterBtn">Hide</button>
+        </div>
+      </div>
+
+      <div class="sk-runtime-footer-stack">
+        <div class="sk-runtime-footer is-plain">
+          <div class="sk-runtime-footer-left">
+            <span class="sk-runtime-kv"><span>PAGE</span><strong>LOCAL</strong></span>
+            <span class="skhps-footer-separator">｜</span>
+            <span class="sk-runtime-kv"><span>Runtime</span><strong>LOCAL</strong></span>
+            <span class="skhps-footer-separator">｜</span>
+            <span class="sk-runtime-kv"><span>Script</span><strong>LOCAL</strong></span>
+          </div>
+          <div class="sk-runtime-footer-center">v2.2.17-202606141848</div>
+          <div class="sk-runtime-traffic">
+            <span class="sk-runtime-lamp">🟢 Gate</span>
+            <span class="sk-runtime-lamp">🟢 Config</span>
+            <span class="sk-runtime-lamp">🟢 Backend</span>
+            <button class="sk-runtime-css-refresh" type="button">🟢 CSS</button>
+            <span class="sk-runtime-lamp">🟢 Data</span>
+            <button class="sk-runtime-toggle" type="button">▲</button>
+          </div>
+        </div>
+
+        <div class="sk-runtime-footer is-plain">
+          <div class="sk-runtime-footer-left">
+            <span class="sk-runtime-kv"><span>PAGE</span><strong>DEV</strong></span>
+            <span class="skhps-footer-separator">｜</span>
+            <span class="sk-runtime-kv"><span>Runtime</span><strong>DEV</strong></span>
+            <span class="skhps-footer-separator">｜</span>
+            <span class="sk-runtime-kv"><span>Script</span><strong>DEV</strong></span>
+          </div>
+          <div class="sk-runtime-footer-center">v2.2.18-dev</div>
+          <div class="sk-runtime-traffic">
+            <span class="sk-runtime-lamp">🟢 Gate</span>
+            <span class="sk-runtime-lamp">🟢 Config</span>
+            <span class="sk-runtime-lamp">🟡 Backend</span>
+            <button class="sk-runtime-css-refresh" type="button">🟢 CSS</button>
+            <span class="sk-runtime-lamp">🟢 Data</span>
+            <button class="sk-runtime-toggle" type="button">▲</button>
+          </div>
+        </div>
+
+        <div class="sk-runtime-footer is-plain">
+          <div class="sk-runtime-footer-left">
+            <span class="sk-runtime-kv"><span>PAGE</span><strong>LOCAL</strong></span>
+            <span class="skhps-footer-separator">｜</span>
+            <span class="sk-runtime-kv"><span>Runtime</span><strong>LOCAL</strong></span>
+            <span class="skhps-footer-separator">｜</span>
+            <span class="sk-runtime-kv"><span>Script</span><strong>LOCAL</strong></span>
+          </div>
+          <div class="sk-runtime-footer-center">v.unknown</div>
+          <div class="sk-runtime-traffic">
+            <span class="sk-runtime-lamp">🟢 Gate</span>
+            <span class="sk-runtime-lamp">🟢 Config</span>
+            <span class="sk-runtime-lamp">🔴 Backend</span>
+            <button class="sk-runtime-css-refresh" type="button">🟡 CSS</button>
+            <span class="sk-runtime-lamp">🟡 Data</span>
+            <button class="sk-runtime-toggle" type="button">▲</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================
+       14 RULES
+  ======================================================== -->
+  <section id="rules" class="sk-section">
+    <div class="sk-section-title">
+      <div class="sk-num">14 / Rules</div>
+      <h2>使用規則</h2>
+    </div>
+
+    <div class="sk-rule-grid">
+      <div class="sk-rule"><span class="sk-rule-icon">①</span><div><strong>規則 1</strong><br><span class="sk-small">頁面不得新增自己的 button/card/table/timer 樣式。</span></div></div>
+      <div class="sk-rule"><span class="sk-rule-icon">②</span><div><strong>規則 2</strong><br><span class="sk-small">RWD 只分三層：Desktop、Tablet、Mobile。</span></div></div>
+      <div class="sk-rule"><span class="sk-rule-icon">③</span><div><strong>規則 3</strong><br><span class="sk-small">頁面特殊 CSS 只能做少量 override。</span></div></div>
+      <div class="sk-rule"><span class="sk-rule-icon">④</span><div><strong>規則 4</strong><br><span class="sk-small">手機拖曳不要只用 dragstart/drop，要用 Pointer Events。</span></div></div>
+      <div class="sk-rule"><span class="sk-rule-icon">⑤</span><div><strong>規則 5</strong><br><span class="sk-small">統一用途變色：藍主色、綠成功、黃警告、紅危險。</span></div></div>
+    </div>
+  </section>
+
+  <footer class="sk-runtime-footer is-plain">
+    <div class="sk-runtime-footer-left">
+      <span class="sk-runtime-status-dot"></span>
+      <span class="sk-runtime-footer-title">Theme40 full template</span>
+      <span class="sk-runtime-kv"><span>Page</span><strong>local preview</strong></span>
+      <span class="sk-runtime-kv"><span>Version</span><strong>v3.5.10</strong></span>
+    </div>
+    <div class="sk-runtime-footer-right">
+      <button class="sk-link">查看 runtime log→</button>
+    </div>
+  </footer>
+
+</div>
+  </main>
+
+  <footer id="footer" data-skhps-footer class="skhps-footer">
+    Footer 載入中.
+  </footer>
+
+<script>
+(function(){
+  /* =======================================================
+     Custom select demo
+  ======================================================= */
+  const fakeBtn = document.getElementById("fakeSelectBtn");
+  const fakeMenu = document.getElementById("fakeSelectMenu");
+  if(fakeBtn && fakeMenu){
+    fakeMenu.querySelectorAll(".sk-fake-select-option").forEach(function(option){
+      option.addEventListener("click", function(){
+        fakeMenu.querySelectorAll(".sk-fake-select-option").forEach(function(o){
+          o.classList.remove("is-active");
+        });
+        option.classList.add("is-active");
+        fakeBtn.textContent = option.textContent;
+      });
+    });
+  }
+
+  /* =======================================================
+     Mini status toggle
+  ======================================================= */
+  const miniStatus = document.getElementById("miniStatus");
+  const miniStatusText = document.getElementById("miniStatusText");
+  if(miniStatus && miniStatusText){
+    miniStatus.addEventListener("change", function(){
+      miniStatusText.textContent = miniStatus.checked ? "啟用中" : "停用中";
+    });
+  }
+
+
+  /* =======================================================
+     Theme40 Table Runtime / V3.5 exact port
+  ======================================================= */
+"use strict";
+
+  const rows = [
+    {appId:"quick-login", title:"快速登入", env:"DEV", position:"前台", enabled:"啟用", version:"v1.0.1", group:"core", sort:"10", updated:"2026-06-14 09:12", count:"42", owner:"Jonathan", diagnostics:"CSS runtime OK；staff cache 12 筆。"},
+    {appId:"qr-signin", title:"QR 簽到", env:"PROD", position:"前台", enabled:"啟用", version:"v0.9.8", group:"meeting", sort:"20", updated:"2026-06-13 18:40", count:"118", owner:"教學部", diagnostics:"Calendar window loaded；form endpoint OK。"},
+    {appId:"css-setting", title:"CSS Sheet 設定", env:"DEV", position:"後台", enabled:"啟用", version:"v1.0.0", group:"system", sort:"30", updated:"2026-06-13 16:05", count:"27", owner:"System", diagnostics:"7 sheets loaded；DEFAULT token active。"},
+    {appId:"dressing-inventory", title:"庫存盤點領用", env:"PROD", position:"後台", enabled:"停用", version:"v0.8.7", group:"wcc", sort:"40", updated:"2026-06-12 21:33", count:"9", owner:"WCC", diagnostics:"mock data mode；backend endpoint not attached。"},
+    {appId:"backend-launcher", title:"後台專案啟動器", env:"DEV", position:"後台", enabled:"啟用", version:"v0.3.2", group:"system", sort:"50", updated:"2026-06-12 19:10", count:"31", owner:"Admin", diagnostics:"external app registry read/write OK。"},
+    {appId:"staff-maintain", title:"人員主檔維護", env:"LOCAL", position:"後台", enabled:"停用", version:"v0.2.0", group:"staff", sort:"60", updated:"2026-06-11 15:22", count:"4", owner:"秘書", diagnostics:"local prototype only；no production publish。"},
+    {appId:"his-charge-check", title:"HIS 計價檢查", env:"DEV", position:"後台", enabled:"啟用", version:"v0.5.4", group:"his", sort:"70", updated:"2026-06-10 12:18", count:"14", owner:"System", diagnostics:"charge mapping loaded；missing self-pay table。"},
+    {appId:"wound-photo-log", title:"傷口照片紀錄", env:"PROD", position:"前台", enabled:"停用", version:"v0.1.9", group:"wound", sort:"80", updated:"2026-06-09 08:48", count:"6", owner:"WCC", diagnostics:"upload module pending；privacy check required。"}
+  ];
+
+  function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"]/g, function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch];
+    });
+  }
+
+  function badgeEnv(env){
+    const cls = env === "PROD" ? "sk-badge-ok" : env === "DEV" ? "sk-badge-info" : "sk-badge-warn";
+    return `<span class="sk-badge ${cls}">${escapeHtml(env)}</span>`;
+  }
+  function badgeEnabled(enabled){
+    const cls = enabled === "啟用" ? "sk-badge-ok" : "sk-badge-warn";
+    return `<span class="sk-badge ${cls}"><span class="sk-dot"></span>${escapeHtml(enabled)}</span>`;
+  }
+
+  function renderTable(tbody, data, allowExpand){
+    tbody.innerHTML = data.map(function(item){
+      const expandMark = allowExpand ? `<span class="sk-expand-mark" aria-hidden="true">›</span>` : "";
+      const detail = allowExpand ? `
+        <tr class="sk-detail-row" data-detail-for="${escapeHtml(item.appId)}" hidden>
+          <td class="sk-detail-cell" colspan="6">
+            <div class="sk-detail-card">
+              <div class="sk-detail-grid">
+                <div class="sk-detail-box">
+                  <strong>${escapeHtml(item.title)} / ${escapeHtml(item.appId)}</strong>
+                  <span>顯示群組：${escapeHtml(item.group)}　排序：${escapeHtml(item.sort)}<br>這些不是第一層 table 欄位，放在 detail 裡面。</span>
+                </div>
+                <div class="sk-detail-box">
+                  <strong>報到資訊</strong>
+                  <span>最後報到：${escapeHtml(item.updated)}<br>報到次數：${escapeHtml(item.count)}</span>
+                </div>
+                <div class="sk-detail-box">
+                  <strong>Owner / Diagnostics</strong>
+                  <span>Owner：${escapeHtml(item.owner)}<br>${escapeHtml(item.diagnostics)}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>` : "";
+
+      return `
+        <tr class="sk-data-row" data-app-id="${escapeHtml(item.appId)}" data-title="${escapeHtml(item.title)}" data-env="${escapeHtml(item.env)}" data-position="${escapeHtml(item.position)}" data-enabled="${escapeHtml(item.enabled)}" data-version="${escapeHtml(item.version)}">
+          <td class="sk-project-cell" data-label="專案">
+            <div class="sk-row-action-rail" aria-hidden="true">
+              <button class="sk-row-action edit" type="button"><span class="sk-edit-mark">✎</span><span>編輯</span></button>
+              <button class="sk-row-action delete" type="button">🗑<span>刪除</span></button>
+            </div>
+            <div class="sk-project-main">
+              <span class="sk-reorder-handle" title="拖曳排序">↕</span>
+              ${expandMark}
+              <span class="sk-project-text"><strong>${escapeHtml(item.appId)}</strong><span>${escapeHtml(item.title)}</span></span>
+            </div>
+            <div class="sk-mobile-meta">
+              ${badgeEnv(item.env)}
+              ${badgeEnabled(item.enabled)}
+              <span class="sk-badge">${escapeHtml(item.version)}</span>
+            </div>
+          </td>
+          <td class="mobile-compact-hide" data-label="環境"><div class="sk-cell-content">${badgeEnv(item.env)}</div></td>
+          <td data-label="位置"><div class="sk-cell-content"><strong>${escapeHtml(item.position)}</strong></div></td>
+          <td class="mobile-compact-hide" data-label="狀態"><div class="sk-cell-content">${badgeEnabled(item.enabled)}</div></td>
+          <td data-label="版本"><div class="sk-cell-content"><strong>${escapeHtml(item.version)}</strong></div></td>
+          <td class="mobile-compact-hide" data-label="最後報到"><div class="sk-cell-content">${escapeHtml(item.updated)}</div></td>
+        </tr>${detail}`;
+    }).join("");
+  }
+
+  function detailOf(row){
+    const next = row?.nextElementSibling;
+    return next && next.classList.contains("sk-detail-row") ? next : null;
+  }
+
+  /* V3.5.3：full handoff 版加強。
+     切換展開列時，同步關閉 transition、smooth scroll 與 browser scroll anchoring；
+     這樣 B table 在完整頁面中也不會先跳一下再歸位。 */
+  function jumpScrollBy(delta){
+    if(Math.abs(delta) <= 1) return;
+    const html = document.documentElement;
+    const previous = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
+    window.scrollTo(0, window.scrollY + delta);
+    html.style.scrollBehavior = previous;
+  }
+
+  function withSilentTableSwitch(table, callback, anchor){
+    const html = document.documentElement;
+    const body = document.body;
+    const shell = table.closest(".sk-table-shell");
+    const previous = {
+      htmlScrollBehavior: html.style.scrollBehavior,
+      htmlOverflowAnchor: html.style.overflowAnchor,
+      bodyOverflowAnchor: body.style.overflowAnchor,
+      tableOverflowAnchor: table.style.overflowAnchor,
+      shellOverflowAnchor: shell ? shell.style.overflowAnchor : ""
+    };
+    const oldTop = anchor ? anchor.getBoundingClientRect().top : 0;
+
+    html.style.scrollBehavior = "auto";
+    html.style.overflowAnchor = "none";
+    body.style.overflowAnchor = "none";
+    table.style.overflowAnchor = "none";
+    if(shell) shell.style.overflowAnchor = "none";
+    table.classList.add("is-silent-switch");
+
+    callback();
+
+    if(anchor){
+      const newTop = anchor.getBoundingClientRect().top;
+      window.scrollTo(0, window.scrollY + (newTop - oldTop));
+    }
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        table.classList.remove("is-silent-switch");
+        html.style.scrollBehavior = previous.htmlScrollBehavior;
+        html.style.overflowAnchor = previous.htmlOverflowAnchor;
+        body.style.overflowAnchor = previous.bodyOverflowAnchor;
+        table.style.overflowAnchor = previous.tableOverflowAnchor;
+        if(shell) shell.style.overflowAnchor = previous.shellOverflowAnchor;
+      });
+    });
+  }
+
+  /* V3.2：收合同一 row 時，把 detail 高度保留在頁面底部。
+     目的不是製造視覺空白，而是避免 document 高度瞬間變短時，瀏覽器把 scrollY 夾回上方。
+     spacer 只在使用者往上滑時逐步縮短；往下滑不縮，避免被推動或卡住感。 */
+  let spacerShrinkBound = false;
+  let lastWheelTime = performance.now();
+  let lastTouchY = 0;
+  let lastTouchTime = performance.now();
+
+  function collapseSpacers(){
+    return Array.from(document.querySelectorAll(".table-collapse-spacer"));
+  }
+
+  function speedRatio(distance, elapsed){
+    const speed = distance / Math.max(elapsed, 16);
+    return Math.min(3, Math.max(1, 1 + speed * 0.8));
+  }
+
+  function shrinkCollapseSpacersBy(amount){
+    if(amount <= 0) return;
+    const spacers = collapseSpacers();
+    if(!spacers.length) return;
+
+    let remainingHeight = 0;
+    spacers.forEach(function(spacer){
+      const currentHeight = spacer.getBoundingClientRect().height;
+      const nextHeight = Math.max(0, currentHeight - amount);
+      spacer.style.height = nextHeight + "px";
+      spacer.style.minHeight = nextHeight + "px";
+      remainingHeight += nextHeight;
+    });
+
+    if(remainingHeight <= 0){
+      spacers.forEach(function(spacer){ spacer.remove(); });
+      unbindCollapseSpacerShrink();
+    }
+  }
+
+  function handleSpacerWheel(event){
+    if(event.deltaY >= 0) return;
+    const now = performance.now();
+    const distance = Math.abs(event.deltaY);
+    shrinkCollapseSpacersBy(distance * speedRatio(distance, now - lastWheelTime));
+    lastWheelTime = now;
+  }
+
+  function handleSpacerTouchStart(event){
+    lastTouchY = event.touches?.[0]?.clientY || 0;
+    lastTouchTime = performance.now();
+  }
+
+  function handleSpacerTouchMove(event){
+    const currentY = event.touches?.[0]?.clientY || lastTouchY;
+    const upwardAmount = currentY - lastTouchY;
+    if(upwardAmount > 0){
+      const now = performance.now();
+      shrinkCollapseSpacersBy(upwardAmount * speedRatio(upwardAmount, now - lastTouchTime));
+      lastTouchTime = now;
+    }
+    lastTouchY = currentY;
+  }
+
+  function handleSpacerKeydown(event){
+    if(event.key === "ArrowUp") shrinkCollapseSpacersBy(48);
+    else if(event.key === "PageUp") shrinkCollapseSpacersBy(Math.max(180, window.innerHeight * 0.72));
+    else if(event.key === "Home") shrinkCollapseSpacersBy(999999);
+  }
+
+  function bindCollapseSpacerShrink(){
+    if(spacerShrinkBound) return;
+    spacerShrinkBound = true;
+    lastWheelTime = performance.now();
+    lastTouchTime = performance.now();
+    window.addEventListener("wheel", handleSpacerWheel, { passive:true });
+    window.addEventListener("touchstart", handleSpacerTouchStart, { passive:true });
+    window.addEventListener("touchmove", handleSpacerTouchMove, { passive:true });
+    window.addEventListener("keydown", handleSpacerKeydown, { passive:true });
+  }
+
+  function unbindCollapseSpacerShrink(){
+    if(!spacerShrinkBound) return;
+    spacerShrinkBound = false;
+    window.removeEventListener("wheel", handleSpacerWheel);
+    window.removeEventListener("touchstart", handleSpacerTouchStart);
+    window.removeEventListener("touchmove", handleSpacerTouchMove);
+    window.removeEventListener("keydown", handleSpacerKeydown);
+  }
+
+  function addCollapseSpacer(detailRow){
+    if(!detailRow || detailRow.hidden) return;
+    const height = Math.ceil(detailRow.getBoundingClientRect().height || 0);
+    if(!height) return;
+
+    const spacer = document.createElement("div");
+    spacer.className = "table-collapse-spacer";
+    spacer.setAttribute("aria-hidden", "true");
+    spacer.style.height = height + "px";
+    spacer.style.minHeight = height + "px";
+    spacer.style.overflow = "hidden";
+    spacer.style.pointerEvents = "none";
+    document.body.appendChild(spacer);
+    bindCollapseSpacerShrink();
+  }
+
+  function setupTable(options){
+    const table = options.table;
+    const tbody = table.querySelector("tbody");
+    const reorderButton = options.reorderButton;
+    const collapseButton = options.collapseButton;
+    const status = options.status;
+    const modeText = options.modeText;
+    const allowExpand = !!options.allowExpand;
+
+    let reorderMode = false;
+    let pointer = null;
+    let draggedRow = null;
+    let draggedDetail = null;
+    let dropIndicator = null;
+    let suppressClickRow = null;
+    let suppressClickUntil = 0;
+
+    function suppressNextClick(row){
+      suppressClickRow = row;
+      suppressClickUntil = performance.now() + 420;
+    }
+
+    function shouldSuppressClick(row){
+      if(!row || row !== suppressClickRow) return false;
+      if(performance.now() > suppressClickUntil){
+        suppressClickRow = null;
+        suppressClickUntil = 0;
+        return false;
+      }
+      suppressClickRow = null;
+      suppressClickUntil = 0;
+      return true;
+    }
+
+    function dataRows(){
+      return Array.from(tbody.querySelectorAll("tr.sk-data-row"));
+    }
+    function clearActions(except){
+      dataRows().forEach(function(row){
+        if(row !== except && !row.classList.contains("is-expanded")) row.classList.remove("is-action-open");
+      });
+    }
+    function closeRow(row, preserveSpace){
+      if(!row) return;
+      const detail = detailOf(row);
+      if(detail && preserveSpace) addCollapseSpacer(detail);
+      if(detail) detail.hidden = true;
+      row.classList.remove("is-expanded", "is-action-open");
+    }
+    function closeExpandedRows(except, preserveSpace){
+      dataRows().forEach(function(row){
+        if(row !== except) closeRow(row, preserveSpace);
+      });
+    }
+    function setStatus(text){
+      if(status) status.textContent = text;
+    }
+    function closeAll(){
+      dataRows().forEach(function(row){ closeRow(row, false); row.classList.remove("is-action-open"); });
+    }
+    function openAction(row){
+      if(reorderMode) return;
+      clearActions(row);
+      row.classList.add("is-action-open");
+      setStatus(`${row.dataset.appId}：已開啟左側編輯 / 刪除 action。`);
+    }
+    function toggleAction(row){
+      if(reorderMode) return;
+      if(row.classList.contains("is-action-open") && !row.classList.contains("is-expanded")){
+        row.classList.remove("is-action-open");
+        setStatus(`${row.dataset.appId}：已收回 action。`);
+      }else{
+        openAction(row);
+      }
+    }
+    function toggleExpand(row){
+      if(!allowExpand || reorderMode) return;
+      const detail = detailOf(row);
+      if(!detail) return;
+
+      if(row.classList.contains("is-expanded")){
+        addCollapseSpacer(detail);
+        detail.hidden = true;
+        row.classList.remove("is-expanded", "is-action-open");
+        setStatus(`${row.dataset.appId}：已收合 detail。`);
+        return;
+      }
+
+      /*
+        V3.5.4：點新的 row 時改成單純狀態機：
+        1) 先把舊 expanded row 收掉。
+        2) 用被點擊 row 自身做 anchor compensation，避免舊 detail 高度消失造成畫面跳。
+        3) 下一個 frame 才打開新 row，讓新 row 的 action rail 只滑動一次。
+      */
+      const oldTop = row.getBoundingClientRect().top;
+      const html = document.documentElement;
+      const body = document.body;
+      const shell = table.closest(".sk-table-shell");
+      const previous = {
+        htmlScrollBehavior: html.style.scrollBehavior,
+        htmlOverflowAnchor: html.style.overflowAnchor,
+        bodyOverflowAnchor: body.style.overflowAnchor,
+        tableOverflowAnchor: table.style.overflowAnchor,
+        shellOverflowAnchor: shell ? shell.style.overflowAnchor : ""
+      };
+
+      html.style.scrollBehavior = "auto";
+      html.style.overflowAnchor = "none";
+      body.style.overflowAnchor = "none";
+      table.style.overflowAnchor = "none";
+      if(shell) shell.style.overflowAnchor = "none";
+
+      table.classList.add("is-silent-switch");
+      closeExpandedRows(row, false);
+      clearActions(row);
+      row.classList.remove("is-expanded", "is-action-open");
+      detail.hidden = true;
+
+      const newTop = row.getBoundingClientRect().top;
+      window.scrollTo(0, window.scrollY + (newTop - oldTop));
+      void table.offsetHeight;
+
+      table.classList.remove("is-silent-switch");
+      html.style.scrollBehavior = previous.htmlScrollBehavior;
+      html.style.overflowAnchor = previous.htmlOverflowAnchor;
+      body.style.overflowAnchor = previous.bodyOverflowAnchor;
+      table.style.overflowAnchor = previous.tableOverflowAnchor;
+      if(shell) shell.style.overflowAnchor = previous.shellOverflowAnchor;
+
+      requestAnimationFrame(function(){
+        detail.hidden = false;
+        row.classList.add("is-expanded", "is-action-open");
+      });
+
+      setStatus(`${row.dataset.appId}：已展開 detail，並開啟左側 action。`);
+    }
+
+    tbody.addEventListener("click", function(event){
+      const action = event.target.closest(".sk-row-action");
+      if(action){
+        const row = event.target.closest(".sk-data-row");
+        const verb = action.classList.contains("delete") ? "刪除" : "編輯";
+        setStatus(`${row.dataset.appId}：點擊 ${verb}。`);
+        event.stopPropagation();
+        return;
+      }
+      if(event.target.closest(".sk-reorder-handle")) return;
+      const row = event.target.closest(".sk-data-row");
+      if(!row || reorderMode) return;
+      if(shouldSuppressClick(row)){
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if(allowExpand) toggleExpand(row);
+      else toggleAction(row);
+    });
+
+    tbody.addEventListener("pointerdown", function(event){
+      const row = event.target.closest(".sk-data-row");
+      if(!row) return;
+
+      if(reorderMode && event.target.closest(".sk-reorder-handle")){
+        startDrag(event, row);
+        return;
+      }
+
+      if(reorderMode || event.target.closest(".sk-row-action")) return;
+      pointer = { id:event.pointerId, row, x:event.clientX, y:event.clientY, moved:false };
+      row.setPointerCapture?.(event.pointerId);
+    });
+
+    tbody.addEventListener("pointermove", function(event){
+      if(draggedRow){
+        moveDrag(event);
+        return;
+      }
+      if(!pointer || pointer.id !== event.pointerId) return;
+      const dx = event.clientX - pointer.x;
+      const dy = event.clientY - pointer.y;
+      if(Math.abs(dx) > 8 || Math.abs(dy) > 8) pointer.moved = true;
+    });
+
+    tbody.addEventListener("pointerup", function(event){
+      if(draggedRow){
+        endDrag(event);
+        return;
+      }
+      if(!pointer || pointer.id !== event.pointerId) return;
+      const dx = event.clientX - pointer.x;
+      const dy = event.clientY - pointer.y;
+      const row = pointer.row;
+      pointer = null;
+      if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 46){
+        suppressNextClick(row);
+        event.preventDefault();
+        if(dx > 0) openAction(row);
+        else {
+          row.classList.remove("is-action-open");
+          if(!row.classList.contains("is-expanded")) setStatus(`${row.dataset.appId}：已左滑收回 action。`);
+        }
+      }
+    });
+
+    tbody.addEventListener("pointercancel", function(){
+      pointer = null;
+      cleanupDrag();
+    });
+
+    function setReorderMode(next){
+      reorderMode = next;
+      table.classList.toggle("is-reorder-mode", reorderMode);
+      closeAll();
+      removeDropIndicator();
+      if(reorderButton) reorderButton.textContent = reorderMode ? "完成排序" : "↕ 調整順序";
+      if(modeText) modeText.textContent = reorderMode
+        ? "排序模式：只顯示左側 ↕，拖曳後用兩列中間的線表示放置位置。"
+        : (allowExpand ? "預設模式：點 row 展開 detail；右滑只開 action。" : "預設模式：點 row 或右滑，顯示編輯 / 刪除。");
+    }
+
+    reorderButton?.addEventListener("click", function(){
+      setReorderMode(!reorderMode);
+    });
+    collapseButton?.addEventListener("click", function(){
+      const row = tbody.querySelector(".sk-data-row.is-expanded");
+      closeRow(row, true);
+      if(row) setStatus(`${row.dataset.appId}：已收合 detail。`);
+    });
+
+    function createDropIndicator(){
+      const tr = document.createElement("tr");
+      tr.className = "sk-drop-indicator";
+      tr.innerHTML = `<td colspan="6"><div class="sk-drop-line"><span>放在這裡</span></div></td>`;
+      return tr;
+    }
+    function removeDropIndicator(){
+      dropIndicator?.remove();
+      dropIndicator = null;
+    }
+    function hideDropIndicator(){
+      /*
+        原位 hover 時只把線從 DOM 拿掉，不把 dropIndicator 物件設成 null。
+        這樣拖曳到其他有效位置時可以重新插入；放開在原位時也只是 no-op，
+        不會丟 NotFoundError，也不會誤判成不能放回原位。
+      */
+      dropIndicator?.remove();
+    }
+    function isDropIndicatorPlaced(){
+      return !!(dropIndicator && dropIndicator.parentNode === tbody);
+    }
+    function startDrag(event, row){
+      draggedRow = row;
+      draggedDetail = detailOf(row);
+      row.classList.add("is-drag-source");
+      dropIndicator = createDropIndicator();
+      event.preventDefault();
+      setStatus(`${row.dataset.appId}：拖曳中，放置位置會用中間線表示。`);
+    }
+    function effectiveRowsForDrop(){
+      /*
+        排序判斷改成「gap zone」而不是 elementFromPoint + 單列中線。
+        規則：上面一列的下半部到下面一列的上半部，都代表同一個 A/B 中間線。
+        這樣指標停在兩列交界附近時，不會因為打到 drop indicator 或 row 中線反覆閃爍。
+      */
+      return dataRows().filter(function(row){ return row !== draggedRow; });
+    }
+
+    function originalDropIndex(){
+      const rows = dataRows();
+      return rows.indexOf(draggedRow);
+    }
+
+    function dropGapFromY(y){
+      if(!draggedRow) return null;
+      const rows = effectiveRowsForDrop();
+      if(!rows.length) return null;
+
+      const centers = rows.map(function(row){
+        const rect = row.getBoundingClientRect();
+        return { row, center: rect.top + rect.height / 2 };
+      });
+
+      let index = centers.length;
+      for(let i = 0; i < centers.length; i += 1){
+        if(y < centers[i].center){
+          index = i;
+          break;
+        }
+      }
+
+      return { index, beforeRow: rows[index] || null };
+    }
+
+    function wouldChangeOrderAtIndex(index){
+      const originalIndex = originalDropIndex();
+      if(originalIndex < 0 || index < 0) return false;
+
+      /*
+        把 draggedRow 暫時從序列拿掉後，原本位置就是 originalIndex 這個 gap。
+        放回這個 gap 是安全 no-op：可以放開，但不顯示「放在這裡」。
+      */
+      return index !== originalIndex;
+    }
+
+    function insertIndicatorAtGap(gap){
+      if(!gap || !dropIndicator) return;
+
+      if(!wouldChangeOrderAtIndex(gap.index)){
+        hideDropIndicator();
+        return;
+      }
+
+      if(gap.beforeRow){
+        tbody.insertBefore(dropIndicator, gap.beforeRow);
+      }else{
+        tbody.appendChild(dropIndicator);
+      }
+    }
+
+    function moveDrag(event){
+      const gap = dropGapFromY(event.clientY);
+      if(gap) insertIndicatorAtGap(gap);
+      else hideDropIndicator();
+    }
+    function endDrag(){
+      if(draggedRow && isDropIndicatorPlaced()){
+        tbody.insertBefore(draggedRow, dropIndicator);
+        if(draggedDetail) tbody.insertBefore(draggedDetail, dropIndicator);
+        setStatus(`${draggedRow.dataset.appId}：已移動到中間線位置。`);
+      }else if(draggedRow){
+        setStatus(`${draggedRow.dataset.appId}：維持原位。`);
+      }
+      cleanupDrag();
+    }
+    function cleanupDrag(){
+      if(draggedRow) draggedRow.classList.remove("is-drag-source");
+      removeDropIndicator();
+      draggedRow = null;
+      draggedDetail = null;
+    }
+  }
+
+  renderTable(document.getElementById("swipeTbody"), rows, false);
+  renderTable(document.getElementById("expandTbody"), rows, true);
+
+  setupTable({
+    table:document.getElementById("swipeTable"),
+    reorderButton:document.getElementById("swipeReorderBtn"),
+    status:document.getElementById("swipeStatus"),
+    modeText:document.getElementById("swipeModeText"),
+    allowExpand:false
+  });
+
+  setupTable({
+    table:document.getElementById("expandTable"),
+    reorderButton:document.getElementById("expandReorderBtn"),
+    collapseButton:document.getElementById("expandCollapseBtn"),
+    status:document.getElementById("expandStatus"),
+    modeText:document.getElementById("expandModeText"),
+    allowExpand:true
+  });
+
+  /* =======================================================
+     Mobile kanban drag + sortable drop gap
+  ======================================================= */
+  const kanban = document.getElementById("demoKanban");
+  const dragStatus = document.getElementById("dragStatus");
+  if(kanban){
+    let dragging = null;
+    let ghost = null;
+    let originParent = null;
+    let originIndex = -1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let activeLane = null;
+    let activeGap = null;
+
+    const laneDropHint = document.createElement("div");
+    laneDropHint.className = "sk-lane-drop-hint";
+    laneDropHint.innerHTML = "<span>放到這邊</span>";
+
+    function laneCards(lane){
+      if(!lane) return [];
+      return Array.from(lane.querySelectorAll(":scope > .sk-drag-card"));
+    }
+
+    function laneCardsWithoutDragging(lane){
+      return laneCards(lane).filter(function(card){ return card !== dragging; });
+    }
+
+    function cardIndexInLane(card, lane){
+      return laneCards(lane).indexOf(card);
+    }
+
+    function getLaneFromPoint(x, y){
+      const el = document.elementFromPoint(x, y);
+      return el ? el.closest(".sk-lane") : null;
+    }
+
+    function removeLaneDropHint(){
+      if(laneDropHint.parentElement){
+        laneDropHint.parentElement.removeChild(laneDropHint);
+      }
+    }
+
+    function clearLaneOver(){
+      kanban.querySelectorAll(".sk-lane.is-over").forEach(function(lane){
+        lane.classList.remove("is-over");
+      });
+      removeLaneDropHint();
+      activeLane = null;
+      activeGap = null;
+    }
+
+    function wouldChangePosition(lane, index){
+      if(!dragging || !lane) return false;
+      if(lane !== originParent) return true;
+      return index !== originIndex;
+    }
+
+    function dropGapFromY(lane, y){
+      if(!lane) return null;
+
+      /* Measure without the hint in DOM. This prevents the line itself from
+         pushing cards and causing the insertion point to flicker. */
+      removeLaneDropHint();
+
+      const cards = laneCardsWithoutDragging(lane);
+      if(!cards.length){
+        return { lane:lane, index:0, before:null };
+      }
+
+      for(let i=0;i<cards.length;i+=1){
+        const rect = cards[i].getBoundingClientRect();
+        if(y < rect.top + rect.height / 2){
+          return { lane:lane, index:i, before:cards[i] };
+        }
+      }
+
+      return { lane:lane, index:cards.length, before:null };
+    }
+
+    function placeDropHint(gap){
+      if(!gap || !wouldChangePosition(gap.lane, gap.index)){
+        clearLaneOver();
+        return;
+      }
+
+      const sameGap =
+        activeGap &&
+        activeGap.lane === gap.lane &&
+        activeGap.index === gap.index;
+
+      kanban.querySelectorAll(".sk-lane.is-over").forEach(function(lane){
+        if(lane !== gap.lane) lane.classList.remove("is-over");
+      });
+
+      activeLane = gap.lane;
+      activeGap = { lane:gap.lane, index:gap.index };
+      gap.lane.classList.add("is-over");
+
+      if(sameGap && laneDropHint.parentElement === gap.lane) return;
+
+      if(gap.before){
+        gap.lane.insertBefore(laneDropHint, gap.before);
+      }else{
+        gap.lane.appendChild(laneDropHint);
+      }
+    }
+
+    function insertCardAt(lane, card, index){
+      const cards = laneCards(lane).filter(function(item){ return item !== card; });
+      const before = cards[index] || null;
+      if(before){
+        lane.insertBefore(card, before);
+      }else{
+        lane.appendChild(card);
+      }
+    }
+
+    function restoreOrigin(){
+      if(!dragging || !originParent) return;
+      insertCardAt(originParent, dragging, Math.max(0, originIndex));
+    }
+
+    function startDrag(event){
+      const card = event.target.closest(".sk-drag-card");
+      if(!card) return;
+
+      event.preventDefault();
+
+      const rect = card.getBoundingClientRect();
+      dragging = card;
+      originParent = card.parentElement;
+      originIndex = cardIndexInLane(card, originParent);
+      offsetX = event.clientX - rect.left;
+      offsetY = event.clientY - rect.top;
+
+      ghost = card.cloneNode(true);
+      ghost.classList.add("is-dragging");
+      ghost.style.position = "fixed";
+      ghost.style.left = rect.left + "px";
+      ghost.style.top = rect.top + "px";
+      ghost.style.width = rect.width + "px";
+      ghost.style.zIndex = "9999";
+      ghost.style.pointerEvents = "none";
+
+      document.body.appendChild(ghost);
+      card.style.opacity = ".28";
+      clearLaneOver();
+    }
+
+    function moveDrag(event){
+      if(!dragging || !ghost) return;
+      event.preventDefault();
+
+      ghost.style.left = (event.clientX - offsetX) + "px";
+      ghost.style.top = (event.clientY - offsetY) + "px";
+
+      const lane = getLaneFromPoint(event.clientX, event.clientY);
+      const gap = dropGapFromY(lane, event.clientY);
+      placeDropHint(gap);
+    }
+
+    function endDrag(event){
+      if(!dragging || !ghost) return;
+
+      const finalGap = activeGap;
+      const appId = dragging.dataset.appId || "";
+
+      dragging.style.opacity = "";
+
+      if(finalGap && wouldChangePosition(finalGap.lane, finalGap.index)){
+        const targetLane = finalGap.lane;
+        const targetIndex = finalGap.index;
+        removeLaneDropHint();
+        insertCardAt(targetLane, dragging, targetIndex);
+
+        if(dragStatus){
+          dragStatus.textContent =
+            "已移動：" +
+            appId +
+            "｜enabled=" +
+            (targetLane.dataset.enabled === "true") +
+            "｜displayPosition=" +
+            (targetLane.dataset.position || "") +
+            "｜sort=" +
+            (cardIndexInLane(dragging, targetLane) + 1);
+        }
+      }else{
+        removeLaneDropHint();
+        restoreOrigin();
+        if(dragStatus){
+          dragStatus.textContent = appId + "：維持原位。";
+        }
+      }
+
+      clearLaneOver();
+      ghost.remove();
+      dragging = null;
+      ghost = null;
+      originParent = null;
+      originIndex = -1;
+    }
+
+    kanban.addEventListener("pointerdown", startDrag);
+    window.addEventListener("pointermove", moveDrag, {passive:false});
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
+  }
+
+  /* Current Header / Footer display demo disabled in skhps-smoke.
+     Real header/footer/runtime are owned by skhpsv2 app-entry. */
+})();
+</script>
+</body>
+</html>

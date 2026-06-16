@@ -1,0 +1,31 @@
+<section class="sk-section" id="kanban">
+<div class="sk-section-title">
+<div class="sk-num">11 / Drag &amp; Drop</div>
+<h2>四象限拖曳（手機可用）</h2>
+</div>
+<div class="sk-card">
+<p class="sk-card-desc sk-mt-0">支援手機觸控拖曳。拖曳卡片時會顯示「放到這邊」插入線，可同時決定象限與排序。</p>
+<div class="sk-kanban sk-mt-3" id="demoKanban">
+<div class="sk-lane" data-enabled="true" data-position="front">
+<div class="sk-lane-title">前台啟用 <span class="sk-badge sk-badge-ok">ON</span></div>
+<div class="sk-drag-card" data-app-id="quick-login"><strong>quick-login</strong><div class="sk-small">快速登入</div></div>
+<div class="sk-drag-card" data-app-id="qr-signin"><strong>qr-signin</strong><div class="sk-small">QR 簽到</div></div>
+</div>
+<div class="sk-lane" data-enabled="true" data-position="backend">
+<div class="sk-lane-title">後台啟用 <span class="sk-badge sk-badge-ok">ON</span></div>
+<div class="sk-drag-card" data-app-id="css-setting"><strong>css-setting</strong><div class="sk-small">CSS Sheet 設定</div></div>
+</div>
+<div class="sk-lane" data-enabled="false" data-position="front">
+<div class="sk-lane-title">前台停用 <span class="sk-badge sk-badge-warn">OFF</span></div>
+<div class="sk-drag-card" data-app-id="old-signin"><strong>old-signin</strong><div class="sk-small">舊版簽到</div></div>
+</div>
+<div class="sk-lane" data-enabled="false" data-position="backend">
+<div class="sk-lane-title">後台停用 <span class="sk-badge sk-badge-warn">OFF</span></div>
+<div class="sk-drag-card" data-app-id="dressing-inventory"><strong>dressing-inventory</strong><div class="sk-small">庫存盤點領用</div></div>
+</div>
+</div>
+<div class="sk-alert sk-alert-info sk-mt-4" id="dragStatus">
+        拖曳卡片到象限中的指定位置，這裡會顯示 appId、enabled、displayPosition 與 sort。
+      </div>
+</div>
+</section>

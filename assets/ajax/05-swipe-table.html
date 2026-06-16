@@ -1,0 +1,32 @@
+<section class="sk-section">
+<div class="sk-section-title">
+<div class="sk-num">05A / Swipe Action Table</div>
+<h2>傳統 table：點一下 / 右滑顯示編輯刪除</h2>
+</div>
+<div class="sk-card sk-table-shell">
+<div class="sk-table-toolbar">
+<div class="sk-table-toolbar-left">
+<button class="sk-btn sk-btn-outline" id="swipeReorderBtn" type="button">↕ 調整順序</button>
+<span class="sk-table-mode-text" id="swipeModeText">預設模式：點 row 或右滑，顯示編輯 / 刪除。</span>
+</div>
+<div class="sk-table-toolbar-right">
+<button class="sk-btn sk-btn-primary" type="button">新增資料</button>
+<button class="sk-btn sk-btn-outline" type="button">匯出</button>
+</div>
+</div>
+<div class="sk-table-wrap">
+<table aria-label="Swipe Action Table" class="sk-table sk-swipe-table" id="swipeTable">
+<colgroup>
+<col class="col-project"/><col class="col-env"/><col class="col-position"/><col class="col-status"/><col class="col-version"/><col class="col-updated"/>
+</colgroup>
+<thead>
+<tr>
+<th>專案</th><th>環境</th><th>位置</th><th>狀態</th><th>版本</th><th>最後報到</th>
+</tr>
+</thead>
+<tbody id="swipeTbody"></tbody>
+</table>
+</div>
+<div class="sk-alert sk-alert-warn" id="swipeStatus">點 row 會切換 action open/close；右滑也可以打開；左滑可收回。排序模式會收起所有 action。</div>
+</div>
+</section>

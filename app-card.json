@@ -9,7 +9,7 @@
   ],
   "href": {
     "local-dev": "http://127.0.0.1:5500/skhps-smoke/",
-    "dev": "https://skhps-smoke.skhps.jonaminz.com/",
-    "prod": "https://skhps-smoke.skhps.jonaminz.com/"
+        "dev": "https://ndmc402010104.github.io/skhps-smoke/",
+    "prod": "https://ndmc402010104.github.io/skhps-smoke/"
   }
 }

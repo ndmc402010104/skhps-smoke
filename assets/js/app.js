@@ -1,7 +1,7 @@
 /*
 檔案位置：skhps-smoke/assets/js/app.js
-時間戳記：2026-06-16 15:30 UTC+8
-用途：SKHPS Smoke 外部專案最小業務入口；只處理本頁內容初始化與 app-ready 回報，不管理水庫 runtime。
+時間戳記：2026-06-16 16:45 UTC+8
+用途：SKHPS Smoke 外部專案最小業務入口；只處理本頁內容初始化與 app-ready 回報，不管理水庫 runtime，也不管理 AJAX。
 */
 
 (function () {
@@ -63,12 +63,11 @@
       setStatus(appTitle + " 已初始化。");
 
       /*
-        Smoke 頁目前不接後端、不載 ajax module。
-        這裡只驗證：
-        - app-entry.js 有載入
-        - entry-core.js 有接手
-        - CSS runtime / header / footer 由水庫處理
-        - 外部 app.js 可以回報 app-ready
+        Smoke 頁 app.js 只驗證：
+        - 外部 app.js 可以被 entry/standalone 載入
+        - 可以回報 app-ready
+        - 不處理 AJAX fragment
+        - 不管理水庫 runtime / header / footer / CSS runtime
       */
 
       loadingDone();

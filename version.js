@@ -5,12 +5,13 @@
 */
 window.SKHPS_VERSION = {
   appId: "skhps-smoke",
-  version: "v0.1.1-202606161503",
+  version: "v0.1.2-202606161535",
   major: 0,
   minor: 1,
-  patch: 1,
-  buildTime: "202606161503",
-  updatedAt: "2026-06-16T15:03:42+08:00",
+  patch: 2,
+  buildTime: "202606161535",
+  updatedAt: "2026-06-16T15:35:52+08:00",
   source: "version.js"
 };
+
 

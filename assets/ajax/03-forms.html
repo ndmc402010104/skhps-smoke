@@ -1,0 +1,106 @@
+<section class="sk-section" id="forms">
+<div class="sk-section-title">
+<div class="sk-num">04 / Forms</div>
+<h2>表單元件</h2>
+</div>
+<div class="sk-grid">
+<div class="sk-card sk-col-6">
+<div class="sk-card-head">
+<div class="sk-card-title-row">
+<div class="sk-card-icon circle">☰</div>
+<div>
+<h3 class="sk-card-title">Basic Fields</h3>
+<div class="sk-card-sub">基礎欄位填寫</div>
+</div>
+</div>
+</div>
+<div class="sk-form-row">
+<label class="sk-field">
+<span class="sk-label">姓名</span>
+<span class="sk-input-wrap">
+<span class="sk-input-icon">👤</span>
+<input class="sk-input has-icon" placeholder="請輸入姓名"/>
+</span>
+</label>
+<label class="sk-field">
+<span class="sk-label">職級 / Native select</span>
+<select class="sk-select">
+<option>VS</option>
+<option>Fellow</option>
+<option>Resident</option>
+<option>NP</option>
+</select>
+<span class="sk-help">簡單 Theme40 版。</span>
+</label>
+</div>
+<label class="sk-field">
+<span class="sk-label">備註</span>
+<textarea class="sk-textarea" placeholder="請輸入備註"></textarea>
+</label>
+<div class="sk-card-desc" style="text-align:right">* 標示 <span style="color:var(--sk-danger)">*</span> 為必填欄位</div>
+</div>
+<div class="sk-card sk-col-6">
+<div class="sk-card-head">
+<div class="sk-card-title-row">
+<div class="sk-card-icon circle accent">⚙</div>
+<div>
+<h3 class="sk-card-title">Controls</h3>
+<div class="sk-card-sub">控制項選擇</div>
+</div>
+</div>
+</div>
+<label class="sk-field">
+<span class="sk-label">完全自訂下拉示範 / Custom select</span>
+<div class="sk-fake-select">
+<button class="sk-fake-select-button" id="fakeSelectBtn" type="button">Resident</button>
+<div class="sk-fake-select-menu" id="fakeSelectMenu">
+<button class="sk-fake-select-option" type="button">VS</button>
+<button class="sk-fake-select-option" type="button">Fellow</button>
+<button class="sk-fake-select-option is-active" type="button">Resident</button>
+<button class="sk-fake-select-option" type="button">NP</button>
+</div>
+</div>
+<span class="sk-help">需要完整下拉風格時用 custom select。</span>
+</label>
+<label class="sk-field">
+<span class="sk-label">選項開關</span>
+<div class="sk-option-row">
+<label class="sk-option">
+<input checked="" type="checkbox"/>
+<span class="sk-option-mark"></span>
+<span>顯示於首頁</span>
+</label>
+<label class="sk-option is-radio">
+<input checked="" name="pos" type="radio"/>
+<span class="sk-option-mark"></span>
+<span>前台</span>
+</label>
+<label class="sk-option is-radio">
+<input name="pos" type="radio"/>
+<span class="sk-option-mark"></span>
+<span>後台</span>
+</label>
+</div>
+</label>
+<div class="sk-field">
+<span class="sk-label">狀態開關</span>
+<div class="sk-mini-status-row">
+<label class="sk-mini-status-control">
+<input checked="" id="miniStatus" type="checkbox"/>
+<span class="sk-mini-status-track">
+<span class="sk-mini-status-thumb"></span>
+<span class="sk-mini-status-label is-off">停用</span>
+<span class="sk-mini-status-label is-on">啟用</span>
+</span>
+</label>
+<span class="sk-mini-status-text" id="miniStatusText">啟用中</span>
+</div>
+<span class="sk-help">左側紅色停用，右側綠色啟用；只有小膠囊本體可點。</span>
+</div>
+<div class="sk-info-strip sk-mt-4">
+<span>ⓘ</span>
+<span>狀態開關使用小型膠囊，不佔空間。</span>
+</div>
+</div>
+</div>
+</section>

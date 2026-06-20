@@ -37,4 +37,34 @@
     <div class="sk-rule"><strong>錯誤靠近欄位</strong>：讓使用者不用猜。</div>
     <div class="sk-rule"><strong>手機避免危險誤觸</strong>：刪除不要放在使用者容易連點的位置。</div>
   </div>
+
+<h3>更多範例：表單分組前後差異</h3>
+<div class="sk-compare">
+  <div class="sk-card bad">
+    <h3>壞：一整串欄位</h3>
+    <div class="ex-form-grid" style="grid-template-columns:1fr">
+      <input class="sk-input" placeholder="姓名"><input class="sk-input" placeholder="員編"><input class="sk-input" placeholder="職級"><input class="sk-input" placeholder="群組"><input class="sk-input" placeholder="權限"><input class="sk-input" placeholder="備註">
+    </div>
+  </div>
+  <div class="sk-card good">
+    <h3>好：分成小段</h3>
+    <div class="ex-form-section"><strong>基本資料</strong><br><br><input class="sk-input" placeholder="姓名"></div><br>
+    <div class="ex-form-section"><strong>權限設定</strong><br><br><select class="sk-select"><option>啟用 Quick Login</option></select></div>
+  </div>
+</div>
+
+<h3>範例：錯誤提示位置</h3>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">錯誤提示</span></div>
+  <div class="ex-screen">
+<div class="ex-form-grid">
+  <label class="sk-field"><span class="sk-label">員編</span><input class="sk-input" value=""><span style="color:var(--danger);font-size:12px">請輸入員編，這是必填欄位。</span></label>
+  <label class="sk-field"><span class="sk-label">職級</span><select class="sk-select"><option>請選擇</option></select></label>
+</div>
+<div class="sk-callout danger">有 1 個欄位需要修正。</div>
+</div>
+</div>
+
+
 </article>

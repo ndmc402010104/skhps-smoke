@@ -57,4 +57,53 @@
   <div class="sk-callout info">
     <strong>一句話：</strong>不要再用單一 <code>.sk-page</code> 解決所有頁面。SKHPS 應該有 <code>reading</code>、<code>admin</code>、<code>report</code> 三種頁型。
   </div>
+
+<h3>更多範例：同一份內容，錯誤寬度 vs 正確寬度</h3>
+<div class="ex-strip">
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">Bad</span></div>
+  <div class="ex-screen">
+<div class="ex-layout narrow">
+  <div class="ex-toolbar"><strong>錯誤：後台清單硬塞窄版</strong><span class="ex-chip">max 760px</span></div>
+  
+<div class="ex-list">
+  <div class="ex-list-row header"><div>主資訊</div><div>狀態</div><div>位置</div><div>更新</div><div>動作</div></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>quick-login</strong><span>人員主檔・Supabase StaffMaster</span></div><div>啟用</div><div>前台</div><div>06-21</div><button class="sk-btn outline">編輯</button></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>css-setting</strong><span>CSS Sheet / Theme40 驗收中心</span></div><div>啟用</div><div>後台</div><div>06-20</div><button class="sk-btn outline">編輯</button></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>dressing-inventory</strong><span>敷料庫存・批號與效期進 detail</span></div><div>停用</div><div>後台</div><div>06-18</div><button class="sk-btn outline">編輯</button></div>
+</div>
+
+  <div class="sk-callout danger">看起來像能用，但欄位很快就會被擠壓，最後一定開始橫拉或省略到看不懂。</div>
+</div>
+</div>
+</div>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">Good</span></div>
+  <div class="ex-screen">
+<div class="ex-layout wide">
+  <div class="ex-toolbar"><strong>正確：後台清單用寬版</strong><span class="ex-chip active">admin width</span></div>
+  
+<div class="ex-list">
+  <div class="ex-list-row header"><div>主資訊</div><div>狀態</div><div>位置</div><div>更新</div><div>動作</div></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>quick-login</strong><span>人員主檔・Supabase StaffMaster</span></div><div>啟用</div><div>前台</div><div>06-21</div><button class="sk-btn outline">編輯</button></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>css-setting</strong><span>CSS Sheet / Theme40 驗收中心</span></div><div>啟用</div><div>後台</div><div>06-20</div><button class="sk-btn outline">編輯</button></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>dressing-inventory</strong><span>敷料庫存・批號與效期進 detail</span></div><div>停用</div><div>後台</div><div>06-18</div><button class="sk-btn outline">編輯</button></div>
+</div>
+
+  <div class="sk-callout good">寬版不是為了鋪滿，而是讓主資訊有呼吸空間。</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<h3>範例：頁面骨架三件事</h3>
+<div class="sk-grid sk-grid-3">
+  <div class="sk-card"><h3>1. Hero / 說明</h3><p>告訴使用者這頁做什麼，不要太長。</p></div>
+  <div class="sk-card"><h3>2. Toolbar / 篩選</h3><p>放搜尋、篩選、新增、匯出。</p></div>
+  <div class="sk-card"><h3>3. Content / 工作區</h3><p>表格、卡片、四象限、報表。</p></div>
+</div>
+
 </article>

@@ -75,4 +75,35 @@ Danger：
 - 停用
 - 清空
 - 需 confirm 的破壞性動作</pre>
+
+<h3>更多範例：按鈕牆 vs 動作層級</h3>
+<div class="sk-compare">
+  <div class="sk-card bad">
+    <h3>壞：全部都像主要按鈕</h3>
+    <div class="ex-button-wall bad">
+      <button class="sk-btn">新增</button><button class="sk-btn">匯出</button><button class="sk-btn">篩選</button><button class="sk-btn">刪除</button><button class="sk-btn">取消</button>
+    </div>
+    <p>每個都在喊，使用者不知道哪個最重要。</p>
+  </div>
+  <div class="sk-card good">
+    <h3>好：動作有層級</h3>
+    <div class="ex-button-wall">
+      <button class="sk-btn primary">新增</button><button class="sk-btn outline">匯出</button><button class="sk-btn outline">篩選</button><button class="sk-btn ghost">取消</button><button class="sk-btn danger">刪除</button>
+    </div>
+    <p>主動作、次動作、危險動作一眼分清楚。</p>
+  </div>
+</div>
+
+<h3>範例：不同位置的按鈕</h3>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">Toolbar / Modal</span></div>
+  <div class="ex-screen">
+<div class="ex-toolbar"><strong>清單頁 Toolbar</strong><div class="ex-demo-actions"><button class="sk-btn outline">匯出</button><button class="sk-btn primary">新增資料</button></div></div>
+<br>
+<div class="ex-modal-backdrop"><div class="ex-modal-card"><h4>確認刪除？</h4><p>刪除後無法復原。</p><div style="text-align:right"><button class="sk-btn outline">取消</button> <button class="sk-btn danger">刪除</button></div></div></div>
+</div>
+</div>
+
+
 </article>

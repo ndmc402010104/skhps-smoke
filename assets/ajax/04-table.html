@@ -63,4 +63,55 @@
   <div class="sk-callout danger">
     <strong>SKHPS table 規範：</strong>一般管理頁禁止把橫向捲動當成主要閱讀方式。先拆主次，再決定 detail。只有報表 / 稽核 / 匯出預覽才允許橫拉 fallback。
   </div>
+
+<h3>更多範例：同一份資料的 4 種 table 用法</h3>
+<div class="ex-strip">
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">壞：全部攤平</span></div>
+  <div class="ex-screen">
+<div class="ex-bad-table"><table><tr><th>品名</th><th>規格</th><th>庫存</th><th>低庫存</th><th>批號</th><th>效期</th><th>倉位</th><th>供應商</th><th>建立者</th><th>修改者</th><th>備註</th></tr><tr><td>Foam Dressing</td><td>10x10</td><td>12</td><td>是</td><td>B001</td><td>2027-01</td><td>A-1</td><td>Vendor</td><td>NP</td><td>Resident</td><td>需補貨</td></tr></table></div>
+</div>
+</div>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">好：主列 + detail</span></div>
+  <div class="ex-screen">
+<div class="ex-list">
+  <div class="ex-list-row header"><div>品名 / 主資訊</div><div>庫存</div><div>狀態</div><div>效期</div><div>動作</div></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>Foam Dressing 10×10</strong><span>倉位 A-1・最近批號 B001</span></div><div>12</div><div>低庫存</div><div>2027-01</div><button class="sk-btn outline">展開</button></div>
+  <div class="sk-detail">Detail：批號 B001 / B002、各批庫存、供應商、備註、最後盤點人。</div>
+</div>
+</div>
+</div>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">桌機：右側 detail</span></div>
+  <div class="ex-screen">
+<div class="ex-sidepanel-demo">
+  
+<div class="ex-list">
+  <div class="ex-list-row header"><div>主資訊</div><div>狀態</div><div>位置</div><div>更新</div><div>動作</div></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>quick-login</strong><span>人員主檔・Supabase StaffMaster</span></div><div>啟用</div><div>前台</div><div>06-21</div><button class="sk-btn outline">編輯</button></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>css-setting</strong><span>CSS Sheet / Theme40 驗收中心</span></div><div>啟用</div><div>後台</div><div>06-20</div><button class="sk-btn outline">編輯</button></div>
+  <div class="ex-list-row"><div class="ex-list-main"><strong>dressing-inventory</strong><span>敷料庫存・批號與效期進 detail</span></div><div>停用</div><div>後台</div><div>06-18</div><button class="sk-btn outline">編輯</button></div>
+</div>
+
+  <div class="ex-panel"><h4>右側 Detail Panel</h4><p>適合桌機。點某列後右側顯示完整細節，不用把主表撐開。</p><button class="sk-btn primary">編輯資料</button></div>
+</div>
+</div>
+</div>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">手機：卡片化</span></div>
+  <div class="ex-screen">
+<div class="sk-mobile-demo">
+  <div class="ex-phone-card"><strong>Foam Dressing</strong><br><span style="color:var(--muted)">庫存 12・低庫存・2027-01</span><div class="ex-phone-meta"><span>批號 B001</span><button class="sk-link-btn">展開→</button></div></div>
+  <div class="ex-phone-card"><strong>Silver Foam</strong><br><span style="color:var(--muted)">庫存 32・正常・2027-06</span><div class="ex-phone-meta"><span>批號 S002</span><button class="sk-link-btn">展開→</button></div></div>
+</div>
+</div>
+</div>
+
+</div>
+
 </article>

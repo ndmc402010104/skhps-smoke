@@ -36,4 +36,32 @@
 - loading 要有進度或文字
 - 成功要有 feedback
 - 錯誤要告訴使用者下一步</pre>
+
+<h3>更多範例：可點範圍與可讀性</h3>
+<div class="ex-access-row">
+  <div class="sk-card bad">
+    <h3>壞：看得到但不好點</h3>
+    <span class="ex-small-hit">×</span>
+    <p>視覺上好像有按鈕，但手指很難準確點到。</p>
+  </div>
+  <div class="sk-card good">
+    <h3>好：視覺小，hit area 夠</h3>
+    <span class="ex-large-hit">×</span>
+    <p>手機上至少要讓使用者好點。</p>
+  </div>
+</div>
+
+<h3>範例：狀態回饋</h3>
+
+<div class="ex-browser">
+  <div class="ex-browser-bar"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-mini-label">Feedback</span></div>
+  <div class="ex-screen">
+<div class="ex-toolbar"><strong>儲存設定</strong><button class="sk-btn primary">儲存</button></div>
+<div class="sk-callout info">正在儲存資料…</div>
+<div class="sk-callout good">資料已成功儲存。</div>
+<div class="sk-callout danger">儲存失敗：Backend 連線逾時，請稍後再試。</div>
+</div>
+</div>
+
+
 </article>

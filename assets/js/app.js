@@ -1,336 +1,170 @@
-/*
-檔案位置：skhps-smoke/assets/js/app.js
-時間戳記：2026-06-16 17:30 UTC+8
-用途：SKHPS Smoke 專案 bootstrap；初始化 Theme40 fragment playground，最後只回報 smoke-app，不接管水庫 runtime。
 
-分工：
-- skhpsv2：共通 entry / loading gate / CSS runtime / header / footer / diagnostics。
-- app.json：Smoke 公文，宣告 fragments / afterScripts / loadingTasks。
-- ajax.js：fragment loader 工具。
-- app.js：Smoke 自己的 bootstrap。
-*/
-
-(function () {
+(function(){
   "use strict";
-
-  var READY_TASK = "smoke-app";
-
-  var FALLBACK_FRAGMENTS = [
+  var TOPICS = [
   {
     "id": "00-overview",
     "title": "總覽",
-    "label": "總覽",
-    "src": "assets/ajax/00-overview.html",
-    "default": true
+    "subtitle": "UI 設計不是裝飾，是工作流程的空間安排",
+    "src": "assets/ajax/00-overview.html"
   },
   {
-    "id": "01-tokens",
-    "title": "Tokens",
-    "label": "Tokens",
-    "src": "assets/ajax/01-tokens.html"
+    "id": "01-layout",
+    "title": "版面配置",
+    "subtitle": "頁型、容器寬度與資訊階層",
+    "src": "assets/ajax/01-layout.html"
   },
   {
-    "id": "02-typography-buttons-cards",
-    "title": "Typography / Buttons / Cards",
-    "label": "Typography / Buttons / Cards",
-    "src": "assets/ajax/02-typography-buttons-cards.html"
-  },
-  {
-    "id": "03-forms",
-    "title": "Forms",
-    "label": "Forms",
-    "src": "assets/ajax/03-forms.html"
-  },
-  {
-    "id": "04-tables-summary",
-    "title": "Tables Summary",
-    "label": "Tables Summary",
-    "src": "assets/ajax/04-tables-summary.html"
-  },
-  {
-    "id": "05-swipe-table",
-    "title": "Swipe Action Table",
-    "label": "Swipe Action Table",
-    "src": "assets/ajax/05-swipe-table.html"
-  },
-  {
-    "id": "06-expand-table",
-    "title": "Expand Detail Table",
-    "label": "Expand Detail Table",
-    "src": "assets/ajax/06-expand-table.html"
-  },
-  {
-    "id": "07-feedback",
-    "title": "Feedback",
-    "label": "Feedback",
-    "src": "assets/ajax/07-feedback.html"
-  },
-  {
-    "id": "08-loading-modal",
-    "title": "Loading / Modal",
-    "label": "Loading / Modal",
-    "src": "assets/ajax/08-loading-modal.html"
-  },
-  {
-    "id": "09-timer-media",
-    "title": "Timer / QR / Media",
-    "label": "Timer / QR / Media",
-    "src": "assets/ajax/09-timer-media.html"
-  },
-  {
-    "id": "10-kanban",
-    "title": "Drag & Drop",
-    "label": "Drag & Drop",
-    "src": "assets/ajax/10-kanban.html"
-  },
-  {
-    "id": "11-header",
+    "id": "02-header",
     "title": "Header",
-    "label": "Header",
-    "src": "assets/ajax/11-header.html"
+    "subtitle": "頁首不是控制台，是方向感與身份識別",
+    "src": "assets/ajax/02-header.html"
   },
   {
-    "id": "12-footer",
+    "id": "03-footer",
     "title": "Footer",
-    "label": "Footer",
-    "src": "assets/ajax/12-footer.html"
+    "subtitle": "頁尾與 runtime 狀態：低調但可信",
+    "src": "assets/ajax/03-footer.html"
   },
   {
-    "id": "13-rules",
-    "title": "Rules",
-    "label": "Rules",
-    "src": "assets/ajax/13-rules.html"
+    "id": "04-table",
+    "title": "Table 應用",
+    "subtitle": "表格不是 Excel：管理清單、報表與 detail 分層",
+    "src": "assets/ajax/04-table.html"
+  },
+  {
+    "id": "05-buttons",
+    "title": "按鈕樣式",
+    "subtitle": "按鈕不是顏色集合，是動作層級",
+    "src": "assets/ajax/05-buttons.html"
+  },
+  {
+    "id": "06-forms",
+    "title": "表單設計",
+    "subtitle": "表單的節奏、錯誤提示與填寫心理",
+    "src": "assets/ajax/06-forms.html"
+  },
+  {
+    "id": "07-cards",
+    "title": "卡片與區塊",
+    "subtitle": "卡片是分組，不是到處包框",
+    "src": "assets/ajax/07-cards.html"
+  },
+  {
+    "id": "08-density",
+    "title": "資訊密度",
+    "subtitle": "一眼望穿：主資訊、次資訊與藏起來的資訊",
+    "src": "assets/ajax/08-density.html"
+  },
+  {
+    "id": "09-mobile",
+    "title": "手機操作",
+    "subtitle": "手機不是縮小桌機，而是重排任務",
+    "src": "assets/ajax/09-mobile.html"
+  },
+  {
+    "id": "10-motion",
+    "title": "動效與回饋",
+    "subtitle": "動畫要幫助理解，不是表演",
+    "src": "assets/ajax/10-motion.html"
+  },
+  {
+    "id": "11-color",
+    "title": "色彩與狀態",
+    "subtitle": "低彩度系統裡，顏色要拿來表達狀態",
+    "src": "assets/ajax/11-color.html"
+  },
+  {
+    "id": "12-accessibility",
+    "title": "可讀性與可用性",
+    "subtitle": "看得懂、點得到、知道發生什麼事",
+    "src": "assets/ajax/12-accessibility.html"
+  },
+  {
+    "id": "13-skhps-rules",
+    "title": "SKHPS 規範草案",
+    "subtitle": "把上面全部收斂成可執行規則",
+    "src": "assets/ajax/13-skhps-rules.html"
   }
 ];
 
-  function getManifest() {
-    return (
-      window.SKHPS_APP_MANIFEST ||
-      window.SKHPS_APP_CONFIG ||
-      window.SKHPS_APP_CARD ||
-      window.SKHPSExternalAppManifest ||
-      window.SKHPS_EXTERNAL_APP_MANIFEST ||
-      {}
-    );
+  function $(sel){ return document.querySelector(sel); }
+  function $all(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+
+  function setStatus(text){
+    var el = $("#smokeStatus");
+    if (el) el.textContent = text;
   }
 
-  function getFragments() {
-    var manifest = getManifest();
-    var list = manifest.fragments;
-
-    if (Array.isArray(list) && list.length) {
-      return list.map(function (item) {
-        return {
-          id: item.id || item.key || item.name || item.src || item.path,
-          title: item.title || item.label || item.name || item.id || item.src || item.path,
-          label: item.label || item.title || item.name || item.id || item.src || item.path,
-          src: item.src || item.path || item.href,
-          path: item.path || item.src || item.href,
-          default: !!item.default
-        };
-      }).filter(function (item) {
-        return !!(item.src || item.path);
-      });
-    }
-
-    return FALLBACK_FRAGMENTS.slice();
+  function findTopic(id){
+    return TOPICS.find(function(t){ return t.id === id; }) || TOPICS[0];
   }
 
-  function getAppTitle() {
-    var manifest = getManifest();
-    var html = document.documentElement;
-
-    return (
-      manifest.title ||
-      manifest.name ||
-      html.getAttribute("data-loading-title") ||
-      html.getAttribute("data-skhps-page-map-current") ||
-      document.title ||
-      "SKHPS Smoke"
-    );
-  }
-
-  function getStatusEl() {
-    return document.getElementById("smokeAjaxStatus") || document.querySelector("[data-app-status]");
-  }
-
-  function getContentEl() {
-    return document.getElementById("smokeAjaxContent") || document.querySelector("[data-smoke-ajax-content]");
-  }
-
-  function getTabsEl() {
-    return document.querySelector("[data-smoke-tabs]") || document.querySelector(".skhps-smoke-toolbar");
-  }
-
-  function setStatus(text) {
-    var el = getStatusEl();
-    if (el) {
-      el.textContent = text;
-    }
-  }
-
-  function getFragmentSrc(item) {
-    return item && (item.src || item.path || item.href);
-  }
-
-  function setActiveButton(src) {
-    document.querySelectorAll("[data-smoke-fragment]").forEach(function (button) {
-      var matched = button.getAttribute("data-smoke-fragment") === src;
-
-      button.classList.toggle("skhps-btn-primary", matched);
-      button.classList.toggle("skhps-btn-secondary", !matched);
-      button.classList.toggle("is-active", matched);
-      button.setAttribute("aria-current", matched ? "page" : "false");
+  function renderNav(){
+    var nav = $("#topicNav");
+    if (!nav) return;
+    nav.innerHTML = TOPICS.map(function(t, idx){
+      var num = String(idx).padStart(2, "0");
+      return '<button class="sk-topic-btn" type="button" data-topic-id="' + t.id + '">' +
+        '<span class="sk-topic-num">' + num + '</span>' +
+        '<span>' + t.title + '</span>' +
+      '</button>';
+    }).join("");
+    nav.addEventListener("click", function(e){
+      var btn = e.target.closest("[data-topic-id]");
+      if (!btn) return;
+      loadTopic(btn.getAttribute("data-topic-id"), true);
     });
   }
 
-  function ensureTabs(fragments) {
-    var tabsEl = getTabsEl();
-
-    if (!tabsEl) {
-      return;
-    }
-
-    /*
-      若 index.html 已經有靜態 button，就只補綁定。
-      若未來改成空容器，app.js 會依 app.json fragments 產生 button。
-    */
-    if (!tabsEl.querySelector("[data-smoke-fragment]")) {
-      tabsEl.innerHTML = "";
-
-      fragments.forEach(function (item) {
-        var src = getFragmentSrc(item);
-        var button = document.createElement("button");
-
-        button.type = "button";
-        button.className = "skhps-btn skhps-btn-secondary";
-        button.setAttribute("data-smoke-fragment", src);
-        button.textContent = item.label || item.title || item.id || src;
-
-        tabsEl.appendChild(button);
-      });
-    }
+  function setActive(id){
+    $all("[data-topic-id]").forEach(function(btn){
+      btn.classList.toggle("is-active", btn.getAttribute("data-topic-id") === id);
+    });
   }
 
-  function loadFragment(itemOrSrc) {
-    var src = typeof itemOrSrc === "string" ? itemOrSrc : getFragmentSrc(itemOrSrc);
-    var contentEl = getContentEl();
+  function updateHero(topic){
+    var title = $("#heroTitle");
+    var sub = $("#heroSub");
+    if (title) title.textContent = topic.title;
+    if (sub) sub.textContent = topic.subtitle;
+  }
 
-    if (!src) {
-      return Promise.reject(new Error("Smoke fragment src missing"));
-    }
+  function loadTopic(id, push){
+    var topic = findTopic(id);
+    var content = $("#articleContent");
+    if (!content) return;
+    setActive(topic.id);
+    updateHero(topic);
+    setStatus("載入中：" + topic.title);
+    content.innerHTML = '<div class="sk-loading">載入文章中…</div>';
 
-    if (!contentEl) {
-      return Promise.reject(new Error("smokeAjaxContent not found"));
-    }
-
-    if (!window.SKHPSSmokeAjax || typeof window.SKHPSSmokeAjax.loadFragment !== "function") {
-      return Promise.reject(new Error("SKHPSSmokeAjax.loadFragment is not available"));
-    }
-
-    setStatus("載入中：" + src);
-    setActiveButton(src);
-
-    return window.SKHPSSmokeAjax.loadFragment(src, contentEl)
-      .then(function (result) {
-        setStatus("已載入：" + src);
-        return result;
+    fetch(topic.src + "?v=" + encodeURIComponent(Date.now()), { cache:"no-store" })
+      .then(function(res){
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
       })
-      .catch(function (error) {
-        setStatus("載入失敗：" + src);
-        throw error;
-      });
-  }
-
-  function bindTabs() {
-    document.querySelectorAll("[data-smoke-fragment]").forEach(function (button) {
-      if (button.getAttribute("data-smoke-bound") === "true") {
-        return;
-      }
-
-      button.setAttribute("data-smoke-bound", "true");
-      button.addEventListener("click", function () {
-        loadFragment(button.getAttribute("data-smoke-fragment")).catch(function (error) {
-          console.error("[skhps-smoke] fragment load failed", error);
-        });
-      });
-    });
-  }
-
-  function reportDone() {
-    document.documentElement.setAttribute("data-skhps-page-ready", "true");
-    document.documentElement.setAttribute("data-skhps-app-ready", "true");
-    document.documentElement.setAttribute("data-skhps-smoke-ready", "true");
-
-    if (window.SKHPSLoading && typeof window.SKHPSLoading.done === "function") {
-      window.SKHPSLoading.done(READY_TASK);
-      return;
-    }
-
-    /*
-      只有 standalone / 水庫未載入時才做 fallback。
-      正常水庫流程不由 app.js release all-ready。
-    */
-    document.documentElement.classList.remove("skhps-loading");
-    document.documentElement.classList.remove("skhps-main-loading");
-  }
-
-  function reportFail(error) {
-    document.documentElement.setAttribute("data-skhps-page-ready", "false");
-    document.documentElement.setAttribute("data-skhps-app-ready", "false");
-    document.documentElement.setAttribute("data-skhps-smoke-ready", "false");
-
-    if (window.SKHPSLoading && typeof window.SKHPSLoading.fail === "function") {
-      window.SKHPSLoading.fail(READY_TASK, error);
-      return;
-    }
-
-    document.documentElement.classList.remove("skhps-loading");
-    document.documentElement.classList.remove("skhps-main-loading");
-  }
-
-  function boot() {
-    var appTitle = getAppTitle();
-    var fragments = getFragments();
-    var defaultFragment =
-      fragments.find(function (item) { return item.default; }) ||
-      fragments[0];
-
-    console.log("[skhps-smoke] app bootstrap", {
-      title: appTitle,
-      fragments: fragments.length,
-      hasSmokeAjax: !!(window.SKHPSSmokeAjax && window.SKHPSSmokeAjax.loadFragment),
-      hasLoadingGate: !!(window.SKHPSLoading && window.SKHPSLoading.done),
-      manifest: getManifest()
-    });
-
-    setStatus(appTitle + " 啟動中。");
-
-    ensureTabs(fragments);
-    bindTabs();
-
-    if (!defaultFragment) {
-      setStatus(appTitle + " 已初始化；沒有 fragments。");
-      reportDone();
-      return;
-    }
-
-    loadFragment(defaultFragment)
-      .catch(function (error) {
-        console.error("[skhps-smoke] default fragment failed", error);
+      .then(function(html){
+        content.innerHTML = html;
+        setStatus("目前閱讀：" + topic.title);
+        if (push) {
+          history.replaceState(null, "", "#" + topic.id);
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
       })
-      .finally(function () {
-        /*
-          Smoke 的目的不是因為某個 demo fragment 404 就卡死整個水庫。
-          fragment 載入失敗會顯示在內容區，但 smoke-app 仍回報完成。
-        */
-        reportDone();
+      .catch(function(err){
+        content.innerHTML = '<div class="sk-callout danger"><strong>文章載入失敗</strong><br>' + 
+          String(err && err.message ? err.message : err) + '</div>';
+        setStatus("載入失敗：" + topic.title);
       });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot, { once: true });
-  } else {
-    boot();
+  function init(){
+    renderNav();
+    var initial = location.hash ? location.hash.replace(/^#/, "") : TOPICS[0].id;
+    loadTopic(initial, false);
   }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();

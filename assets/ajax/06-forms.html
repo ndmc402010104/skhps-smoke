@@ -1,0 +1,40 @@
+
+<article>
+  <div class="sk-kicker">06 / Forms</div>
+  <h2>表單設計：讓人不用怕填錯</h2>
+  <p class="sk-lead">表單不是欄位排列而已。好的表單要讓使用者知道：我要填什麼、哪些必填、錯在哪裡、按下去會發生什麼事。</p>
+
+  <h3>一、表單的節奏</h3>
+  <p>表單最怕一整片欄位沒有分組。使用者會覺得像在填公文。你可以把表單拆成「基本資料」、「狀態設定」、「備註 / 進階」三層。</p>
+
+  <div class="sk-demo">
+    <div class="sk-demo-title">表單示範</div>
+    <div class="sk-demo-frame">
+      <div class="sk-form-demo">
+        <label class="sk-field"><span class="sk-label">姓名</span><input class="sk-input" placeholder="請輸入姓名"></label>
+        <label class="sk-field"><span class="sk-label">職級</span><select class="sk-select"><option>Resident</option><option>Fellow</option><option>VS</option></select></label>
+        <label class="sk-field"><span class="sk-label">群組</span><input class="sk-input" placeholder="WCC / Ward / Admin"></label>
+        <label class="sk-field"><span class="sk-label">Quick Login</span><select class="sk-select"><option>啟用</option><option>停用</option></select></label>
+        <label class="sk-field sk-textarea"><span class="sk-label">備註</span><textarea class="sk-textarea" placeholder="補充說明"></textarea></label>
+      </div>
+    </div>
+  </div>
+
+  <h3>二、錯誤提示應該靠近錯誤本身</h3>
+  <p>不要只在頁面最上方說「欄位錯誤」。使用者要知道是哪一個欄位錯、為什麼錯、怎麼改。</p>
+
+  <div class="sk-callout warn">
+    <strong>表單錯誤提示公式：</strong>欄位旁提示 + 頁面上方摘要。欄位旁負責修正，摘要負責提醒。
+  </div>
+
+  <h3>三、儲存與取消的位置</h3>
+  <p>你之前提到「取消跟儲存要反過來，不然按太快會按到刪除」。這是很實際的 UX 問題。破壞性動作不應該跟主要提交太近，尤其手機上更危險。</p>
+
+  <h3>四、SKHPS 表單規範草案</h3>
+  <div class="sk-rule-list">
+    <div class="sk-rule"><strong>欄位分組</strong>：不要一口氣 20 個欄位直直排。</div>
+    <div class="sk-rule"><strong>主要按鈕固定</strong>：儲存 primary、取消 outline、刪除 danger 並隔開。</div>
+    <div class="sk-rule"><strong>錯誤靠近欄位</strong>：讓使用者不用猜。</div>
+    <div class="sk-rule"><strong>手機避免危險誤觸</strong>：刪除不要放在使用者容易連點的位置。</div>
+  </div>
+</article>

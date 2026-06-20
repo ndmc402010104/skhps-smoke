@@ -1,0 +1,67 @@
+
+<article>
+  <div class="sk-kicker">02 / Header</div>
+  <h2>Header：頁首不是 runtime dashboard，是方向感</h2>
+  <p class="sk-lead">Header 的工作不是把所有資訊都塞上去。Header 的工作是讓使用者知道：我在哪個系統？我現在在哪一頁？我可以去哪裡？我是誰或登入狀態如何？</p>
+
+  <h3>一、Header 的四個任務</h3>
+  <div class="sk-rule-list">
+    <div class="sk-rule"><strong>身份識別</strong>：SKHPS / Plastic Surgery / 外部 App 名稱。</div>
+    <div class="sk-rule"><strong>方向感</strong>：回首頁、目前頁面、麵包屑或簡短標題。</div>
+    <div class="sk-rule"><strong>帳號動作</strong>：登入、登出、使用者身份。</div>
+    <div class="sk-rule"><strong>少量全域動作</strong>：例如回 SKHPS 首頁、進後台，但不能塞太多。</div>
+  </div>
+
+  <h3>二、Header 不應該做什麼</h3>
+  <div class="sk-callout danger">
+    <strong>不要把 Header 變成飛機駕駛艙。</strong>環境、版本、CSS、Backend、Gate、Data source、debug 狀態，這些應該低調放 footer 或 runtime panel，不該占用 header。
+  </div>
+
+  <div class="sk-demo">
+    <div class="sk-demo-title">Header 示範：乾淨殼層</div>
+    <div class="sk-demo-frame">
+      <div class="sk-demo-header">
+        <div class="sk-demo-brand">
+          <div class="sk-demo-logo">SK</div>
+          <div>
+            <strong>SKHPS</strong><br>
+            <span style="color:var(--muted);font-size:13px">Plastic Surgery / CSS Setting</span>
+          </div>
+        </div>
+        <div class="sk-demo-actions">
+          <button class="sk-btn ghost">回首頁</button>
+          <button class="sk-btn outline">後台</button>
+          <button class="sk-btn primary">登入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>三、外部 App 的 Header 要更克制</h3>
+  <p>外部 app 的 header 不需要把水庫 runtime 的資訊重複一次。它只要告訴使用者目前是誰、屬於 SKHPS、可以回到 SKHPS 首頁即可。</p>
+
+  <div class="sk-compare">
+    <div class="sk-card bad">
+      <h3>錯誤</h3>
+      <p>Header 放滿環境燈、版本、CSS 狀態、Backend 狀態、資料來源、debug 開關。</p>
+      <p>結果：頁面一開始就很吵，真正的頁面標題反而不清楚。</p>
+    </div>
+    <div class="sk-card good">
+      <h3>正確</h3>
+      <p>Header 保持乾淨：品牌、頁面名稱、主要導航、登入狀態。</p>
+      <p>Runtime 狀態往 footer / panel 下沉。</p>
+    </div>
+  </div>
+
+  <h3>四、SKHPS Header 規範草案</h3>
+  <pre>Header 必放：
+- 左側：SKHPS brand / app name
+- 中間或副標：目前頁面名稱
+- 右側：登入 / 登出 / 回首頁
+
+Header 禁止：
+- 大量 runtime 狀態
+- 大量版本資訊
+- 多層複雜選單
+- 每個外部專案自行設計一套 header</pre>
+</article>

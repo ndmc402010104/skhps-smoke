@@ -1,0 +1,39 @@
+
+<article>
+  <div class="sk-kicker">12 / Accessibility</div>
+  <h2>可讀性與可用性：看得懂、點得到、知道發生什麼事</h2>
+  <p class="sk-lead">可用性不是額外加分，而是醫院內部系統的基本需求。尤其你做的是工作工具，不是展示頁。使用者可能很忙、在手機上、在病房、在光線不佳的地方操作。</p>
+
+  <h3>一、文字可讀</h3>
+  <div class="sk-rule-list">
+    <div class="sk-rule"><strong>字不要太小</strong>：主內容至少 14–16px，caption 才用 12px。</div>
+    <div class="sk-rule"><strong>對比要夠</strong>：淡灰字不要拿來放重要資訊。</div>
+    <div class="sk-rule"><strong>行距要夠</strong>：中文太擠會很難讀。</div>
+  </div>
+
+  <h3>二、按得到</h3>
+  <p>手機上按鈕太小會很痛苦。圖示按鈕尤其要注意，不要只有 20px 的 hit area。就算視覺上小，實際可點範圍也要夠。</p>
+
+  <h3>三、知道發生什麼事</h3>
+  <p>使用者按下儲存後，要知道是正在儲存、成功、失敗，還是沒有反應。Loading、toast、alert、button disabled 都是回饋的一部分。</p>
+
+  <div class="sk-callout info">
+    <strong>SKHPS 的可用性底線：</strong>任何資料寫入動作都必須有回饋。任何刪除 / 停用都必須能確認。任何 loading 都不能像壞掉。
+  </div>
+
+  <h3>四、可用性規範草案</h3>
+  <pre>文字：
+- 主文字 14–16px 以上
+- 次要文字不可承載關鍵資訊
+- 中文行距保持舒適
+
+操作：
+- 手機可點範圍要夠
+- 危險動作要 confirm
+- 拖曳只能在 handle 觸發
+
+狀態：
+- loading 要有進度或文字
+- 成功要有 feedback
+- 錯誤要告訴使用者下一步</pre>
+</article>

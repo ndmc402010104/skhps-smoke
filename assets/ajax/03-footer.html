@@ -1,0 +1,50 @@
+
+<article>
+  <div class="sk-kicker">03 / Footer</div>
+  <h2>Footer：低調的 runtime 狀態與信任感</h2>
+  <p class="sk-lead">Footer 在 SKHPS 很重要，因為你不是一般展示網站。你的系統有 local / dev / prod，有 Apps Script / Cloudflare / Supabase，有 loading gate，有 CSS runtime。這些資訊需要存在，但不能喧賓奪主。</p>
+
+  <h3>一、Footer 的定位</h3>
+  <p>Footer 是「低調可信的狀態列」。它不是主要操作區，也不是主視覺。它是讓你在出問題時可以快速判斷：現在跑在哪個環境？資料來源是哪裡？Gate / Backend / CSS 是否正常？</p>
+
+  <div class="sk-demo">
+    <div class="sk-demo-title">Footer 示範：低調 runtime</div>
+    <div class="sk-demo-frame">
+      <div class="sk-demo-footer">
+        <div>PAGE <strong>DEV</strong> ｜ Runtime <strong>DEV</strong> ｜ Script <strong>LOCAL</strong></div>
+        <div>v2.2.18-dev</div>
+        <div class="sk-lamps">
+          <span>🟢 Gate</span><span>🟢 Config</span><span>🟢 Backend</span><span>🟢 CSS</span><span>🟢 Data</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>二、Footer 為什麼不要做太漂亮？</h3>
+  <p>因為 footer 的工作是「穩定存在」，不是吸引注意。太大的 badge、太亮的色彩、太多卡片，都會讓頁尾變成第二個 dashboard。這會干擾主要工作畫面。</p>
+
+  <div class="sk-callout info">
+    <strong>SKHPS 很適合 traffic light footer。</strong>因為紅黃綠狀態燈能快速提醒問題，但平常不會干擾閱讀。
+  </div>
+
+  <h3>三、Footer 要顯示什麼？</h3>
+  <div class="sk-rule-list">
+    <div class="sk-rule"><strong>環境</strong>：PAGE / Runtime / Script 是 local、dev 還是 prod。</div>
+    <div class="sk-rule"><strong>版本</strong>：中間低調顯示即可，不要搶視線。</div>
+    <div class="sk-rule"><strong>狀態燈</strong>：Gate、Config、Backend、CSS、Data。</div>
+    <div class="sk-rule"><strong>展開 panel</strong>：詳細 log 可以藏在 panel，不要全部攤開。</div>
+  </div>
+
+  <h3>四、Footer 的切換問題</h3>
+  <p>你之前遇到 local / dev / prod 切換錯誤，本質不是 footer 視覺問題，而是 footer 同時扮演了「狀態顯示」與「環境切換導航」。這種功能可以保留，但必須清楚：</p>
+  <pre>local 按下去 → dev
+dev 按下去 → prod
+prod 按下去 → local 或回對應環境
+
+而且不能 fallback 到 index 錯頁。
+Footer link 必須知道目前 pageId / appId / route。</pre>
+
+  <div class="sk-callout warn">
+    <strong>設計提醒：</strong>Footer 可以有環境切換，但點擊目標要小心。狀態燈是「看」，環境切換是「做」，兩者要視覺上分清楚。
+  </div>
+</article>

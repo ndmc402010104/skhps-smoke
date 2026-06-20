@@ -1,0 +1,78 @@
+
+<article>
+  <div class="sk-kicker">05 / Buttons</div>
+  <h2>按鈕樣式：按鈕不是顏色集合，是動作層級</h2>
+  <p class="sk-lead">按鈕設計最重要的不是有幾種顏色，而是使用者能不能一眼看懂：哪個是主要動作、哪個是次要動作、哪個是危險動作、哪個只是連結。</p>
+
+  <h3>一、按鈕層級</h3>
+  <div class="sk-grid sk-grid-3">
+    <div class="sk-card">
+      <span class="sk-badge">Primary</span>
+      <h3>主要動作</h3>
+      <p>一個區塊通常只應該有一個 primary。像是：新增、儲存、送出。</p>
+      <button class="sk-btn primary">儲存</button>
+    </div>
+    <div class="sk-card">
+      <span class="sk-badge">Secondary</span>
+      <h3>次要動作</h3>
+      <p>不該搶 primary 的視線。像是：取消、返回、匯出、篩選。</p>
+      <button class="sk-btn outline">取消</button>
+    </div>
+    <div class="sk-card">
+      <span class="sk-badge">Danger</span>
+      <h3>危險動作</h3>
+      <p>刪除、停用、清空。應該少見、明確，通常需要確認。</p>
+      <button class="sk-btn danger">刪除</button>
+    </div>
+  </div>
+
+  <h3>二、文字連結不是小按鈕</h3>
+  <p>Link 適合「前往某處」或「看更多」，不是主要提交動作。你之前定案的 Theme40 link 很合理：純文字，箭頭直接寫在文字內，不要用一堆 pseudo-element 搞複雜。</p>
+
+  <div class="sk-demo">
+    <div class="sk-demo-title">按鈕層級示範</div>
+    <div class="sk-demo-frame">
+      <button class="sk-btn primary">儲存變更</button>
+      <button class="sk-btn outline">取消</button>
+      <button class="sk-btn ghost">稍後再說</button>
+      <button class="sk-link-btn">查看詳細資料→</button>
+    </div>
+  </div>
+
+  <h3>三、常見錯誤</h3>
+  <div class="sk-compare">
+    <div class="sk-card bad">
+      <h3>錯誤</h3>
+      <p>每個按鈕都很亮、每個都像 primary。使用者不知道哪個才是下一步。</p>
+    </div>
+    <div class="sk-card good">
+      <h3>正確</h3>
+      <p>一個主要動作最亮；次要動作用 outline；輕量導航用 link；危險動作用紅色但少量。</p>
+    </div>
+  </div>
+
+  <h3>四、SKHPS 按鈕規範草案</h3>
+  <pre>Primary：
+- 新增
+- 儲存
+- 送出
+- 確認主要流程
+
+Outline：
+- 取消
+- 返回
+- 匯出
+- 篩選
+- 次要操作
+
+Ghost / Link：
+- 查看更多
+- 前往設定
+- 展開說明
+
+Danger：
+- 刪除
+- 停用
+- 清空
+- 需 confirm 的破壞性動作</pre>
+</article>

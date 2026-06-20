@@ -1,0 +1,60 @@
+
+<article>
+  <div class="sk-kicker">01 / Layout</div>
+  <h2>版面配置：先分頁型，再談美感</h2>
+  <p class="sk-lead">布局最容易犯的錯，是先問「好不好看」，但真正該先問的是：「這頁是拿來做什麼的？」不同任務需要不同寬度、不同資訊密度、不同視線路徑。</p>
+
+  <h3>一、三種桌機頁型</h3>
+  <div class="sk-grid sk-grid-3">
+    <div class="sk-card">
+      <span class="sk-badge">Reading / Form</span>
+      <h3>窄頁</h3>
+      <p>適合說明、設定、單一編輯、表單。目標是好讀、好填。寬度約 820–1000px。</p>
+    </div>
+    <div class="sk-card">
+      <span class="sk-badge">Admin List</span>
+      <h3>寬頁</h3>
+      <p>適合後台、清單、CSS Setting、人員名單、專案管理。目標是掃描與操作。寬度約 1280–1600px。</p>
+    </div>
+    <div class="sk-card">
+      <span class="sk-badge">Report / Audit</span>
+      <h3>滿版頁</h3>
+      <p>適合稽核、報表、比對、匯出預覽。目標是容納資料，但仍要分層，不是無腦塞欄位。</p>
+    </div>
+  </div>
+
+  <h3>二、同一套視覺，不等於同一個寬度</h3>
+  <p>「統一設計」不是每個頁面都一樣寬，而是背景、字體、色彩、按鈕、卡片語言一致。寬度應該依任務調整。</p>
+
+  <div class="sk-demo">
+    <div class="sk-demo-title">體感：三種容器</div>
+    <div class="sk-demo-frame">
+      <div class="sk-box reading">
+        <strong>窄頁 / Reading：</strong>適合填寫、閱讀、單一設定。這裡如果太寬，眼睛會疲勞。
+      </div>
+    </div>
+    <div class="sk-demo-frame">
+      <div class="sk-box admin">
+        <strong>寬頁 / Admin：</strong>適合管理清單。這裡如果太窄，就會浪費螢幕，表格也會擠。
+      </div>
+    </div>
+    <div class="sk-demo-frame">
+      <div class="sk-box full">
+        <strong>滿版 / Report：</strong>適合報表與比對。但它應該是少數頁面，不是日常管理頁的預設。
+      </div>
+    </div>
+  </div>
+
+  <h3>三、SKHPS 的頁型建議</h3>
+  <div class="sk-rule-list">
+    <div class="sk-rule"><strong>首頁</strong>：中寬，不要滿版。首頁是導航，不是資料表。</div>
+    <div class="sk-rule"><strong>CSS Setting</strong>：寬頁。它是管理工具，不能只用中間一條。</div>
+    <div class="sk-rule"><strong>quick-login 人員後台</strong>：寬頁。主表只放關鍵欄位，其他進 detail。</div>
+    <div class="sk-rule"><strong>dressing inventory</strong>：寬頁 + detail。主表看庫存狀態，批號進 detail。</div>
+    <div class="sk-rule"><strong>QR sign 紀錄</strong>：看用途。日常查詢用寬頁；匯出稽核用報表頁。</div>
+  </div>
+
+  <div class="sk-callout info">
+    <strong>一句話：</strong>不要再用單一 <code>.sk-page</code> 解決所有頁面。SKHPS 應該有 <code>reading</code>、<code>admin</code>、<code>report</code> 三種頁型。
+  </div>
+</article>

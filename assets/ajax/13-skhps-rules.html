@@ -1,0 +1,78 @@
+
+<article>
+  <div class="sk-kicker">13 / SKHPS Rules</div>
+  <h2>SKHPS UI Layout 規範草案</h2>
+  <p class="sk-lead">這一章把前面全部收斂成可以交給未來任何聊天、Agent、或自己回頭看的規範。它不是最終版，但足夠作為下一輪 CSS Setting / Smoke / 外部專案改版的基準。</p>
+
+  <h3>一、頁型規範</h3>
+  <pre>Reading / Form Page：
+- 用於說明、設定、單一表單、編輯頁
+- 容器約 820–1000px
+- 目標：好讀、好填
+
+Admin List Page：
+- 用於後台、CSS Setting、人員名單、庫存管理、專案管理
+- 容器約 1280–1600px
+- 目標：掃描、搜尋、操作
+- 不允許橫向捲動作為主要閱讀方式
+
+Report / Audit Page：
+- 用於報表、稽核、比對、匯出預覽
+- 接近滿版
+- 可允許橫向捲動，但必須是 fallback，不是日常頁預設
+
+Mobile Operation Page：
+- 不是桌機縮小
+- 主畫面只保留 A 層資訊
+- 次要資訊進展開或 detail</pre>
+
+  <h3>二、Header / Footer 規範</h3>
+  <pre>Header：
+- 品牌 / 系統名稱
+- 目前頁面
+- 回首頁 / 登入登出
+- 不放大量 runtime 狀態
+
+Footer：
+- 環境：PAGE / Runtime / Script
+- 版本
+- Gate / Config / Backend / CSS / Data 狀態燈
+- 詳細資料進 runtime panel
+- 保持低調，不做成大 dashboard</pre>
+
+  <h3>三、Table 規範</h3>
+  <pre>一般管理頁：
+- 主表 5–6 個視覺欄位
+- A 層資訊留在主列
+- B 層資訊進 detail
+- C 層資訊進 modal / side panel / 編輯頁
+- 禁止無腦橫拉
+
+報表頁：
+- 可以寬
+- 可以橫拉
+- 但要有欄位群組、固定主欄、明確排序與篩選</pre>
+
+  <h3>四、Button / Form 規範</h3>
+  <pre>Button：
+- Primary 一區只放一個
+- Outline 放次要動作
+- Link 放導航 / 查看
+- Danger 放刪除 / 停用，並需確認
+
+Form：
+- 分組
+- 錯誤靠近欄位
+- 儲存與取消清楚
+- 刪除與常用動作隔開</pre>
+
+  <h3>五、最重要的總原則</h3>
+  <div class="sk-callout good">
+    <strong>SKHPS 是工作系統，不是展示網站。</strong><br>
+    所有設計都要回到：找得到、看得懂、點得到、不誤觸、出錯時知道怎麼辦。
+  </div>
+
+  <div class="sk-callout danger">
+    <strong>禁忌：</strong>不要為了「看起來統一」而把文章頁規則套到後台頁；不要為了「資料完整」而把資料庫欄位全部攤到 table；不要為了「好看」而讓 header/footer 搶走主畫面的注意力。
+  </div>
+</article>

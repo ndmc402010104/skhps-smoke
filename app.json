@@ -1,43 +1,13 @@
 {
-  "schemaVersion": 1,
-  "appId": "skhps-smoke",
-  "title": "SKHPS Smoke",
-  "name": "SKHPS Smoke",
-  "description": "用來驗證 skhpsv2 外部專案 entry、loading gate、CSS runtime、header/footer、runtime panel 與 Theme40 fragment loader 的 Smoke 測試專案。",
-  "group": "debug",
-  "href": "index.html",
-  "version": {
-    "source": "version.js",
-    "globalName": "SKHPS_VERSION",
-    "aliasGlobalName": "SKHPS_APP_VERSION"
-  },
+  "id": "skhps-smoke",
+  "name": "SKHPS Smoke UI Design Article Lab",
+  "title": "SKHPS Smoke UI Design Article Lab",
+  "version": "v0.3.0-20260621",
   "entry": {
+    "html": "index.html",
     "afterScripts": [
-      "assets/js/ajax.js",
       "assets/js/app.js"
-    ],
-    "loadingTasks": [
-      "smoke-app"
     ]
-  },
-  "features": {
-    "cssRuntime": true,
-    "header": true,
-    "footer": true,
-    "runtimePanel": true,
-    "backendClient": false,
-    "diagnostics": true
-  },
-  "backend": {
-    "required": false,
-    "actions": []
-  },
-  "capabilities": {
-    "hasBusinessUi": true,
-    "hasBackend": false,
-    "hasAjaxModules": false,
-    "hasFragments": true,
-    "canRunOfflineMock": true
   },
   "fragments": [
     {
@@ -48,82 +18,95 @@
       "default": true
     },
     {
-      "id": "01-tokens",
-      "title": "Tokens",
-      "label": "Tokens",
-      "src": "assets/ajax/01-tokens.html"
+      "id": "01-layout",
+      "title": "版面配置",
+      "label": "版面配置",
+      "src": "assets/ajax/01-layout.html",
+      "default": false
     },
     {
-      "id": "02-typography-buttons-cards",
-      "title": "Typography / Buttons / Cards",
-      "label": "Typography / Buttons / Cards",
-      "src": "assets/ajax/02-typography-buttons-cards.html"
-    },
-    {
-      "id": "03-forms",
-      "title": "Forms",
-      "label": "Forms",
-      "src": "assets/ajax/03-forms.html"
-    },
-    {
-      "id": "04-tables-summary",
-      "title": "Tables Summary",
-      "label": "Tables Summary",
-      "src": "assets/ajax/04-tables-summary.html"
-    },
-    {
-      "id": "05-swipe-table",
-      "title": "Swipe Action Table",
-      "label": "Swipe Action Table",
-      "src": "assets/ajax/05-swipe-table.html"
-    },
-    {
-      "id": "06-expand-table",
-      "title": "Expand Detail Table",
-      "label": "Expand Detail Table",
-      "src": "assets/ajax/06-expand-table.html"
-    },
-    {
-      "id": "07-feedback",
-      "title": "Feedback",
-      "label": "Feedback",
-      "src": "assets/ajax/07-feedback.html"
-    },
-    {
-      "id": "08-loading-modal",
-      "title": "Loading / Modal",
-      "label": "Loading / Modal",
-      "src": "assets/ajax/08-loading-modal.html"
-    },
-    {
-      "id": "09-timer-media",
-      "title": "Timer / QR / Media",
-      "label": "Timer / QR / Media",
-      "src": "assets/ajax/09-timer-media.html"
-    },
-    {
-      "id": "10-kanban",
-      "title": "Drag & Drop",
-      "label": "Drag & Drop",
-      "src": "assets/ajax/10-kanban.html"
-    },
-    {
-      "id": "11-header",
+      "id": "02-header",
       "title": "Header",
       "label": "Header",
-      "src": "assets/ajax/11-header.html"
+      "src": "assets/ajax/02-header.html",
+      "default": false
     },
     {
-      "id": "12-footer",
+      "id": "03-footer",
       "title": "Footer",
       "label": "Footer",
-      "src": "assets/ajax/12-footer.html"
+      "src": "assets/ajax/03-footer.html",
+      "default": false
     },
     {
-      "id": "13-rules",
-      "title": "Rules",
-      "label": "Rules",
-      "src": "assets/ajax/13-rules.html"
+      "id": "04-table",
+      "title": "Table 應用",
+      "label": "Table 應用",
+      "src": "assets/ajax/04-table.html",
+      "default": false
+    },
+    {
+      "id": "05-buttons",
+      "title": "按鈕樣式",
+      "label": "按鈕樣式",
+      "src": "assets/ajax/05-buttons.html",
+      "default": false
+    },
+    {
+      "id": "06-forms",
+      "title": "表單設計",
+      "label": "表單設計",
+      "src": "assets/ajax/06-forms.html",
+      "default": false
+    },
+    {
+      "id": "07-cards",
+      "title": "卡片與區塊",
+      "label": "卡片與區塊",
+      "src": "assets/ajax/07-cards.html",
+      "default": false
+    },
+    {
+      "id": "08-density",
+      "title": "資訊密度",
+      "label": "資訊密度",
+      "src": "assets/ajax/08-density.html",
+      "default": false
+    },
+    {
+      "id": "09-mobile",
+      "title": "手機操作",
+      "label": "手機操作",
+      "src": "assets/ajax/09-mobile.html",
+      "default": false
+    },
+    {
+      "id": "10-motion",
+      "title": "動效與回饋",
+      "label": "動效與回饋",
+      "src": "assets/ajax/10-motion.html",
+      "default": false
+    },
+    {
+      "id": "11-color",
+      "title": "色彩與狀態",
+      "label": "色彩與狀態",
+      "src": "assets/ajax/11-color.html",
+      "default": false
+    },
+    {
+      "id": "12-accessibility",
+      "title": "可讀性與可用性",
+      "label": "可讀性與可用性",
+      "src": "assets/ajax/12-accessibility.html",
+      "default": false
+    },
+    {
+      "id": "13-skhps-rules",
+      "title": "SKHPS 規範草案",
+      "label": "SKHPS 規範草案",
+      "src": "assets/ajax/13-skhps-rules.html",
+      "default": false
     }
   ]
 }

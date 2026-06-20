@@ -1,0 +1,66 @@
+
+<article>
+  <div class="sk-kicker">04 / Table</div>
+  <h2>Table 應用：表格不是 Excel，管理頁也不是資料庫 dump</h2>
+  <p class="sk-lead">這一章是你最在意的。橫向捲動不是錯，但它不該是一般管理頁的主要閱讀方式。大多數 SKHPS 頁面應該採用「主資訊表格 + detail 展開」，而不是把所有欄位攤成 Excel。</p>
+
+  <h3>一、先分清楚三種 table</h3>
+  <div class="sk-grid sk-grid-3">
+    <div class="sk-card">
+      <span class="sk-badge">Management List</span>
+      <h3>管理清單</h3>
+      <p>日常操作用。目標是找資料、看狀態、做動作。應避免橫拉。</p>
+    </div>
+    <div class="sk-card">
+      <span class="sk-badge">Detail Table</span>
+      <h3>主列 + detail</h3>
+      <p>主列放 A 層資訊，detail 放 B 層資訊。最適合 SKHPS 多數頁面。</p>
+    </div>
+    <div class="sk-card">
+      <span class="sk-badge">Report Table</span>
+      <h3>報表表格</h3>
+      <p>比對、稽核、匯出用。可以更寬，必要時才允許橫拉。</p>
+    </div>
+  </div>
+
+  <h3>二、錯誤示範：所有欄位攤平</h3>
+  <div class="sk-demo">
+    <div class="sk-demo-title">壞 table：橫向捲動讓你失去整列記憶</div>
+    <div class="sk-demo-frame">
+      <div class="sk-bad-table">
+        <table>
+          <thead><tr><th>姓名</th><th>住院號</th><th>病歷號</th><th>主治</th><th>床號</th><th>傷口部位</th><th>面積</th><th>敷料</th><th>VAC</th><th>狀態</th><th>備註</th><th>最後更新</th></tr></thead>
+          <tbody><tr><td>王小明</td><td>123456</td><td>MRN8891</td><td>林醫師</td><td>A12</td><td>左小腿</td><td>4x5 cm</td><td>銀離子泡棉</td><td>使用中</td><td>追蹤中</td><td>需照會 WCC</td><td>2026-06-21</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3>三、正確示範：主列一眼看完，細節下沉</h3>
+  <div class="sk-demo">
+    <div class="sk-demo-title">好 table：主資訊穩定、detail 補充</div>
+    <div class="sk-demo-frame">
+      <div class="sk-table-lite">
+        <div class="sk-row header"><div>病人 / 主資訊</div><div>狀態</div><div>床號</div><div>關鍵值</div><div>動作</div></div>
+        <div>
+          <div class="sk-row">
+            <div class="sk-row-main"><strong>王小明 / 住院 123456</strong><span>左小腿傷口・銀離子泡棉・主治林醫師</span></div>
+            <div>追蹤中</div><div>A12</div><div>4 × 5 cm</div><div>編輯</div>
+          </div>
+          <div class="sk-detail">Detail：病歷號 MRN8891、VAC 使用中、需照會 WCC、最後更新 2026-06-21、建立者 Resident A。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>四、欄位分層規則</h3>
+  <div class="sk-rule-list">
+    <div class="sk-rule"><strong>A 層：主表一定要看到</strong> 名稱、狀態、位置、關鍵數值、最後更新、動作。</div>
+    <div class="sk-rule"><strong>B 層：detail 才看</strong> 版本、來源、備註、次要 ID、建立者、修改者。</div>
+    <div class="sk-rule"><strong>C 層：編輯頁 / modal 才看</strong> 長備註、完整歷程、權限細節、稽核 log。</div>
+  </div>
+
+  <div class="sk-callout danger">
+    <strong>SKHPS table 規範：</strong>一般管理頁禁止把橫向捲動當成主要閱讀方式。先拆主次，再決定 detail。只有報表 / 稽核 / 匯出預覽才允許橫拉 fallback。
+  </div>
+</article>

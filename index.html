@@ -2062,7 +2062,7 @@ hr{
 
       function runtimeBaseUrl(value) {
         if (value === "local-dev") {
-          return "http://127.0.0.1:5500/skhpsv2/";
+          return window.location.origin + "/skhpsv2/";
         }
 
         if (value === "dev") {
@@ -2073,7 +2073,7 @@ hr{
       }
 
       function currentRuntime() {
-        if (host === "127.0.0.1" || host === "localhost" || host === "") {
+        if (host === "127.0.0.1" || host === "localhost" || host === "" || /^192\.168\./.test(host) || /^10\./.test(host) || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) {
           return "local-dev";
         }
 
@@ -2241,3 +2241,5 @@ hr{
   </footer>
 </body>
 </html>
+
+

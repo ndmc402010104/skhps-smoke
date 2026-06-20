@@ -8,12 +8,12 @@
 
   var versionInfo = {
     appId: "skhps-smoke",
-    version: "v0.3.1-202606191538",
+    version: "v0.3.2-202606210144",
     major: 0,
     minor: 3,
-    patch: 1,
-    buildTime: "202606191538",
-    updatedAt: "2026-06-19T15:38:34+08:00",
+    patch: 2,
+    buildTime: "202606210144",
+    updatedAt: "2026-06-21T01:44:07+08:00",
     source: "version.js"
   };
 
@@ -24,5 +24,6 @@
   window.SKHPS_VERSION = versionInfo;
   window.SKHPS_APP_VERSION = versionInfo;
 })();
+
 
 
